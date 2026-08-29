@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ *
+ * DJDN design tokens
+ * Locked palette from the kickoff brief. Burnt orange is an accent
+ * only; bottle green is the grounding dark tone (header/footer/section
+ * breaks) in place of flat black. Background is warm cream, never
+ * stark white; ink is a warm near-black, never pure #000.
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-primary: #ba5624; /* burnt orange — CTAs, "Shop Now", price highlights, active states */
+  --color-primary-hover: #a34a1e; /* pressed / hover state for primary */
+  --color-secondary: #1f3d2b; /* bottle green — header, footer, dark section breaks */
+  --color-secondary-hover: #17301f;
+  --color-background: #faf6ef; /* warm cream page ground */
+  --color-ink: #1c1917; /* warm near-black body text */
+  --color-ink-muted: #6f6a63; /* secondary text on cream */
+  --color-surface: #ffffff; /* cards / product surfaces, brighter than the page */
+  --color-outline: #e5ddd0; /* subtle borders */
+  --color-error: #b3261e;
+
+  /* On-dark helpers for text sitting on bottle green */
+  --color-on-secondary: #f4f0e7;
+  --color-on-secondary-muted: #b8c4bb;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, "Iowan Old Style", Georgia,
+    "Times New Roman", serif;
+
+  /* Fraunces headline scale — serif does the "taste" work at large sizes */
+  --text-display: clamp(2.75rem, 6vw, 5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+
+  --tracking-tight: -0.011em;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "kern", "liga", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    letter-spacing: var(--text-display--letter-spacing);
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }
