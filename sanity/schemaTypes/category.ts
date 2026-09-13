@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { TagIcon } from "@sanity/icons";
+import { TagIcon } from "../lib/icons";
 
 /**
  * A product category (Shirts, Trousers, Outerwear, Knitwear …). The Men/Women

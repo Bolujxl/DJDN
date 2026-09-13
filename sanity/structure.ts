@@ -1,5 +1,5 @@
 import type { StructureResolver } from "sanity/structure";
-import { PackageIcon, TagIcon, DocumentTextIcon, UserIcon } from "@sanity/icons";
+import { PackageIcon, TagIcon, DocumentTextIcon, UserIcon } from "./lib/icons";
 
 /** Studio sidebar — Shop content grouped away from the journal. */
 export const structure: StructureResolver = (S) =>

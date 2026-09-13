@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { DocumentTextIcon } from "@sanity/icons";
+import { DocumentTextIcon } from "../lib/icons";
 
 /** Editorial / journal content — "The Colony". */
 export const blogPost = defineType({

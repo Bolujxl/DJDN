@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { PackageIcon } from "@sanity/icons";
+import { PackageIcon } from "../lib/icons";
 
 const NGN = (kobo: number | undefined) =>
   typeof kobo === "number"
