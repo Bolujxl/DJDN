@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { NewsletterForm } from "./newsletter-form";
@@ -91,7 +92,13 @@ export function SiteFooter() {
           <p className="font-sans text-xs text-on-secondary-muted">
             © {new Date().getFullYear()} DJDN. All rights reserved.
           </p>
-          <span className="font-serif text-lg text-on-secondary">DJDN</span>
+          <Image
+            src="/brand/logo/djdn-logo-white.png"
+            alt="DJDN"
+            width={1080}
+            height={478}
+            className="h-6 w-auto"
+          />
         </div>
       </div>
     </footer>

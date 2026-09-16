@@ -18,11 +18,31 @@ import { useEffect, useRef } from "react";
  * the photos are the strongest asset on the page and need to be seen.
  */
 const SLIDES = [
-  { src: "/brand/models/trucker-cap-brick-wall.jpg", caption: "Trucker cap — brick wall" },
-  { src: "/brand/models/striped-shirt-sunflower-bouquet.jpg", caption: "Striped shirt — sunflower bouquet" },
-  { src: "/brand/models/trucker-cap-portrait-brick.jpg", caption: "Trucker cap — portrait" },
-  { src: "/brand/models/beanie-sunflower-tee.jpg", caption: "Beanie — sunflower tee" },
-  { src: "/brand/models/bw-crochet-sunflower.jpg", caption: "Crochet sunflower — b&w" },
+  {
+    src: "/brand/models/trucker-cap-brick-wall.jpg",
+    alt: "Model wearing the DJDN trucker cap, boxy tee, and mesh shorts in bottle green",
+    caption: "Trucker Cap & Boxy Tee — Bottle Green",
+  },
+  {
+    src: "/brand/models/striped-shirt-sunflower-bouquet.jpg",
+    alt: "Model wearing the DJDN weekend shirt in pistachio stripe",
+    caption: "The Weekend Shirt — Pistachio Stripe",
+  },
+  {
+    src: "/brand/models/trucker-cap-portrait-brick.jpg",
+    alt: "Model wearing the DJDN trucker cap and tee in black",
+    caption: "Trucker Cap & Tee — Black",
+  },
+  {
+    src: "/brand/models/beanie-sunflower-tee.jpg",
+    alt: "Model wearing the DJDN ribbed beanie and sunflower graphic tee",
+    caption: "Ribbed Beanie & Graphic Tee — Sunflower",
+  },
+  {
+    src: "/brand/models/bw-crochet-sunflower.jpg",
+    alt: "Model wearing the DJDN boxy tee and mesh shorts",
+    caption: "Boxy Tee & Mesh Shorts",
+  },
 ];
 
 const GAP_PX = 20;
@@ -108,10 +128,7 @@ export function Hero() {
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-12 lg:items-center lg:gap-6 lg:px-8 lg:py-32">
         {/* Copy */}
         <div className="lg:col-span-5">
-          <p className="font-sans text-xs uppercase tracking-[0.2em] text-ink-muted">
-            DJDN — Men &amp; Women
-          </p>
-          <h1 className="mt-4 text-[length:var(--text-display)] leading-[1.02] tracking-[-0.02em] text-ink">
+          <h1 className="text-[length:var(--text-display)] leading-[1.02] tracking-[-0.02em] text-ink">
             Dress like you mean it.
           </h1>
           <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-ink-muted">
@@ -119,24 +136,12 @@ export function Hero() {
             as fast as you do.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
+          <div className="mt-9">
             <Link
               href="/shop"
               className="rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover"
             >
               Shop Now
-            </Link>
-            <Link
-              href="/shop/men"
-              className="font-sans text-sm font-medium text-ink/90 underline decoration-ink/25 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink/50"
-            >
-              Shop Men
-            </Link>
-            <Link
-              href="/shop/women"
-              className="font-sans text-sm font-medium text-ink/90 underline decoration-ink/25 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink/50"
-            >
-              Shop Women
             </Link>
           </div>
         </div>
@@ -165,12 +170,21 @@ export function Hero() {
                 >
                   <Image
                     src={slide.src}
-                    alt={slide.caption}
+                    alt={slide.alt}
                     fill
                     sizes="(max-width: 1024px) 45vw, 300px"
                     className="object-cover"
                     priority={copy === 1 && slide === SLIDES[0]}
                   />
+
+                  <NewTag />
+
+                  {/* Product caption — scrim keeps it legible over any photo */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent px-4 pb-4 pt-10">
+                    <p className="font-sans text-xs font-medium text-white">
+                      {slide.caption}
+                    </p>
+                  </div>
                 </div>
               )),
             )}
@@ -195,6 +209,28 @@ export function Hero() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Hanging price-tag, pinned near the right edge of each photo — a small
+ * physical detail (string + notched tag) rather than a flat pill, positioned
+ * low enough to clear the arch's curved top.
+ */
+function NewTag() {
+  return (
+    <div className="absolute right-6 top-28 -rotate-6 sm:top-32 lg:top-36">
+      <div className="mx-auto h-2.5 w-px bg-white/70" />
+      <div
+        className="flex h-11 w-9 flex-col items-center justify-center gap-1 bg-error shadow-[0_3px_10px_rgba(0,0,0,0.35)]"
+        style={{ clipPath: "polygon(0 0, 100% 0, 100% 72%, 50% 100%, 0 72%)" }}
+      >
+        <span className="h-1 w-1 rounded-full bg-white/90" />
+        <span className="font-sans text-[9px] font-bold uppercase tracking-wide text-white">
+          New
+        </span>
+      </div>
+    </div>
   );
 }
 

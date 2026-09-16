@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -122,13 +123,20 @@ export function SiteHeader() {
           {mobileOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
 
-        {/* Logo — the one place green carries through as text */}
+        {/* Logo mark */}
         <Link
           href="/"
-          className="font-serif text-2xl tracking-[-0.01em] text-secondary transition-opacity hover:opacity-75 lg:flex-1"
+          className="transition-opacity hover:opacity-75 lg:flex-1"
           onClick={() => setOpenDept(null)}
         >
-          DJDN
+          <Image
+            src="/brand/logo/djdn-logo.png"
+            alt="DJDN"
+            width={1080}
+            height={478}
+            priority
+            className="h-8 w-auto sm:h-9"
+          />
         </Link>
 
         {/* Primary nav — desktop */}
