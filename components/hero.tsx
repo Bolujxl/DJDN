@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Homepage hero. Lives on cream — green is already doing its job in the
@@ -10,53 +10,54 @@ import { useEffect, useRef } from "react";
  * green (60/30/10: cream stays dominant). Two-column: copy on the left,
  * gallery on the right, generously padded top and bottom.
  *
- * The gallery shows real campaign photography — multiple shots visible at
- * once, arch-framed, autoplaying on a loop with visible prev/next controls
- * as a manual override. An earlier pass tried a hover-triggered card stack
- * (reactbits' "Stack") but that hid 80% of the photography behind an
- * undiscoverable interaction, which is exactly wrong for a fashion hero:
- * the photos are the strongest asset on the page and need to be seen.
+ * The gallery is committed to editorial, not shoppable: campaign photos of
+ * models, no captions, no "New" tags, no prices — that language belongs to
+ * the New Arrivals grid below, which actually has products and links. Mixing
+ * product-card chrome onto mood photography was the muddled version of
+ * this; this is the fixed one.
+ *
+ * Aspect ratio is now a single `aspect-[3/4]` at every breakpoint (only
+ * width varies) — the old version hard-coded independent width/height
+ * pairs per breakpoint that didn't share a ratio, so the arch's proportions
+ * silently drifted across screen sizes.
+ *
+ * The loop mechanism itself (triple-buffered track, debounced wraparound
+ * correction) is left as-is on purpose. It renders 3x the DOM nodes a
+ * tighter buffer would need, which is real waste — but it's also the
+ * result of fixing two separate bugs (a grid-blowout and a smooth-scroll
+ * race condition) validated by hand. Shrinking the buffer reopens the same
+ * class of edge-case bug for a marginal DOM saving; not worth it here.
  */
 const SLIDES = [
   {
     src: "/brand/models/trucker-cap-brick-wall.jpg",
     alt: "Model wearing the DJDN trucker cap, boxy tee, and mesh shorts in bottle green",
-    caption: "Trucker Cap & Boxy Tee — Bottle Green",
   },
   {
     src: "/brand/models/striped-shirt-sunflower-bouquet.jpg",
     alt: "Model wearing the DJDN weekend shirt in pistachio stripe",
-    caption: "The Weekend Shirt — Pistachio Stripe",
   },
   {
     src: "/brand/models/trucker-cap-portrait-brick.jpg",
     alt: "Model wearing the DJDN trucker cap and tee in black",
-    caption: "Trucker Cap & Tee — Black",
   },
   {
     src: "/brand/models/beanie-sunflower-tee.jpg",
     alt: "Model wearing the DJDN ribbed beanie and sunflower graphic tee",
-    caption: "Ribbed Beanie & Graphic Tee — Sunflower",
   },
   {
     src: "/brand/models/bw-crochet-sunflower.jpg",
     alt: "Model wearing the DJDN boxy tee and mesh shorts",
-    caption: "Boxy Tee & Mesh Shorts",
   },
 ];
 
 const GAP_PX = 20;
-const AUTOPLAY_MS = 4000;
+const AUTOPLAY_MS = 5500;
 
-// Track is rendered as three copies of SLIDES back to back — [prev][real][next].
-// Scrolling always happens inside the middle copy; whenever the scroll
-// position drifts into the prev or next copy, we jump by one copy-width with
-// no animation (identical content on both sides, so the jump is invisible).
-// That's what makes the loop actually infinite in both directions instead of
-// dead-ending at the first or last real image.
 export function Hero() {
   const trackRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   function setWidth() {
     const track = trackRef.current;
@@ -79,6 +80,13 @@ export function Hero() {
     trackRef.current?.scrollBy({ left: direction * step(), behavior: "smooth" });
   }
 
+  function scrollToIndex(index: number) {
+    const track = trackRef.current;
+    if (!track) return;
+    const width = setWidth();
+    track.scrollTo({ left: width + index * step(), behavior: "smooth" });
+  }
+
   // Start centred in the middle copy so both directions have room to wrap into.
   useEffect(() => {
     const track = trackRef.current;
@@ -86,15 +94,27 @@ export function Hero() {
     track.scrollLeft = setWidth();
   }, []);
 
-  // Snap the scroll position back into the middle copy once it drifts out.
-  // Debounced until scrolling actually settles — correcting mid-scroll would
-  // fight both the smooth-scroll animation and the browser's own scroll-snap
-  // settling, which otherwise race each other and leave the track stuck.
+  // Snap the scroll position back into the middle copy once it drifts out,
+  // and track which real slide is currently frontmost for the dots.
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
     let settleTimer: ReturnType<typeof setTimeout>;
+    let rafId: number;
+
+    function updateActiveIndex() {
+      if (!track) return;
+      const width = setWidth();
+      if (width === 0) return;
+      const stepPx = step();
+      const positionInSet = ((track.scrollLeft - width) % width + width) % width;
+      setActiveIndex(Math.round(positionInSet / stepPx) % SLIDES.length);
+    }
+
     function onScroll() {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateActiveIndex);
+
       clearTimeout(settleTimer);
       settleTimer = setTimeout(() => {
         if (!track) return;
@@ -107,10 +127,12 @@ export function Hero() {
         }
       }, 120);
     }
+
     track.addEventListener("scroll", onScroll);
     return () => {
       track.removeEventListener("scroll", onScroll);
       clearTimeout(settleTimer);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -146,7 +168,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Gallery — autoplaying loop, every shot reachable, nothing hidden behind hover */}
+        {/* Gallery — autoplaying loop, every shot reachable, purely editorial */}
         <div
           className="relative min-w-0 lg:col-span-7"
           onMouseEnter={() => (pausedRef.current = true)}
@@ -166,7 +188,7 @@ export function Hero() {
                 <div
                   key={`${copy}-${slide.src}`}
                   data-slide
-                  className="relative h-[380px] w-[240px] shrink-0 snap-start overflow-hidden rounded-t-full rounded-b-lg bg-outline sm:h-[440px] sm:w-[270px] lg:h-[520px] lg:w-[300px]"
+                  className="relative aspect-[3/4] w-[240px] shrink-0 snap-start overflow-hidden rounded-t-full rounded-b-lg bg-outline sm:w-[270px] lg:w-[300px]"
                 >
                   <Image
                     src={slide.src}
@@ -176,15 +198,6 @@ export function Hero() {
                     className="object-cover"
                     priority={copy === 1 && slide === SLIDES[0]}
                   />
-
-                  <NewTag />
-
-                  {/* Product caption — scrim keeps it legible over any photo */}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent px-4 pb-4 pt-10">
-                    <p className="font-sans text-xs font-medium text-white">
-                      {slide.caption}
-                    </p>
-                  </div>
                 </div>
               )),
             )}
@@ -194,7 +207,7 @@ export function Hero() {
             type="button"
             aria-label="Previous look"
             onClick={() => scroll(-1)}
-            className="absolute -left-4 top-1/2 hidden -translate-y-1/2 rounded-full bg-surface p-2.5 text-ink shadow-[0_4px_16px_rgba(28,25,23,0.15)] transition-transform hover:scale-105 sm:flex"
+            className="absolute -left-4 top-1/2 flex -translate-y-1/2 rounded-full bg-surface p-2 text-ink shadow-[0_4px_16px_rgba(28,25,23,0.15)] transition-transform hover:scale-105 sm:p-2.5"
           >
             <ArrowIcon direction="left" />
           </button>
@@ -202,35 +215,29 @@ export function Hero() {
             type="button"
             aria-label="Next look"
             onClick={() => scroll(1)}
-            className="absolute -right-4 top-1/2 hidden -translate-y-1/2 rounded-full bg-surface p-2.5 text-ink shadow-[0_4px_16px_rgba(28,25,23,0.15)] transition-transform hover:scale-105 sm:flex"
+            className="absolute -right-4 top-1/2 flex -translate-y-1/2 rounded-full bg-surface p-2 text-ink shadow-[0_4px_16px_rgba(28,25,23,0.15)] transition-transform hover:scale-105 sm:p-2.5"
           >
             <ArrowIcon direction="right" />
           </button>
+
+          {/* Pagination — the only signal (especially on mobile, where nothing else hints this scrolls) that there are 5 shots on a loop */}
+          <div className="mt-4 flex justify-center gap-2">
+            {SLIDES.map((slide, index) => (
+              <button
+                key={slide.src}
+                type="button"
+                aria-label={`Show look ${index + 1}`}
+                aria-current={index === activeIndex}
+                onClick={() => scrollToIndex(index)}
+                className={`h-1.5 rounded-full transition-all ${
+                  index === activeIndex ? "w-5 bg-ink" : "w-1.5 bg-ink/25"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Hanging price-tag, pinned near the right edge of each photo — a small
- * physical detail (string + notched tag) rather than a flat pill, positioned
- * low enough to clear the arch's curved top.
- */
-function NewTag() {
-  return (
-    <div className="absolute right-6 top-28 -rotate-6 sm:top-32 lg:top-36">
-      <div className="mx-auto h-2.5 w-px bg-white/70" />
-      <div
-        className="flex h-11 w-9 flex-col items-center justify-center gap-1 bg-error shadow-[0_3px_10px_rgba(0,0,0,0.35)]"
-        style={{ clipPath: "polygon(0 0, 100% 0, 100% 72%, 50% 100%, 0 72%)" }}
-      >
-        <span className="h-1 w-1 rounded-full bg-white/90" />
-        <span className="font-sans text-[9px] font-bold uppercase tracking-wide text-white">
-          New
-        </span>
-      </div>
-    </div>
   );
 }
 
