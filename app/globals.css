@@ -12,10 +12,11 @@
   --color-primary-hover: #a34a1e; /* pressed / hover state for primary */
   --color-secondary: #1f3d2b; /* bottle green — header, footer, dark section breaks */
   --color-secondary-hover: #17301f;
-  --color-background: #faf6ef; /* warm cream page ground */
+  --color-background: #faf6ef; /* warm cream page ground — Hero */
+  --color-background-alt: #f1e9d8; /* deeper warm oat — one tone down from background, so a section shift never has to jump straight to white */
   --color-ink: #1c1917; /* warm near-black body text */
   --color-ink-muted: #6f6a63; /* secondary text on cream */
-  --color-surface: #ffffff; /* cards / product surfaces, brighter than the page */
+  --color-surface: #ffffff; /* reserved for product photography insets, not whole sections — the actual photos are shot on white, so this is where that white belongs */
   --color-outline: #e5ddd0; /* subtle borders */
   --color-error: #b3261e;
 

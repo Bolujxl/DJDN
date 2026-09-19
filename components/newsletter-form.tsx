@@ -51,12 +51,12 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="w-full rounded-full border border-white/20 bg-white/5 px-5 py-3 font-sans text-sm text-on-secondary placeholder:text-on-secondary-muted transition-colors focus:border-white/40 focus:outline-none"
+        className="w-full rounded-[18px] border border-white/20 bg-white/5 px-5 py-3 font-sans text-sm text-on-secondary placeholder:text-on-secondary-muted transition-colors focus:border-white/40 focus:outline-none"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="shrink-0 rounded-full bg-primary px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
+        className="shrink-0 rounded-[18px] bg-primary px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-60"
       >
         {status === "loading" ? "Signing up…" : "Sign up"}
       </button>

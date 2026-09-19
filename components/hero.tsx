@@ -166,7 +166,7 @@ export function Hero() {
           <div className="mt-9">
             <Link
               href="/shop"
-              className="rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+              className="rounded-[18px] bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover"
             >
               Shop Now
             </Link>
