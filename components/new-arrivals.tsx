@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { formatNaira } from "@/lib/format";
-import { NewTag } from "./new-tag";
 
 /**
  * Placeholder catalogue until real products exist in Sanity. Every entry
@@ -10,6 +9,16 @@ import { NewTag } from "./new-tag";
  * shot, kept as the default/fallback image — until a third party delivers
  * real 3D product mockups. Swap `image` per product as those arrive; the
  * card layout doesn't need to change.
+ *
+ * Sits on `bg-surface` (white) with a hairline top border, one step up from
+ * the hero's cream — a deliberate plane shift so sections read as distinct
+ * without needing a color block or a hard divider to announce it.
+ *
+ * No "New" tag on these cards — the section is already titled New Arrivals,
+ * so tagging every card "New" too just repeats the section header. NewTag
+ * (components/new-tag.tsx) is kept for the future Shop/PLP grid, where
+ * products are mixed old and new and the tag actually carries information —
+ * restyled to a flat pill/rectangle there, not this hanging-tag shape.
  */
 const DEFAULT_IMAGE = "/brand/products/djdn-tee-black.jpg";
 
@@ -22,19 +31,12 @@ const PRODUCTS = [
 
 export function NewArrivals() {
   return (
-    <section className="bg-background">
+    <section className="border-t border-outline bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="flex items-end justify-between">
-          <h2 className="font-serif text-3xl text-ink sm:text-4xl">
-            New Arrivals
-          </h2>
-          <Link
-            href="/new-arrivals"
-            className="font-sans text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-          >
-            Shop all →
-          </Link>
-        </div>
+        <h2 className="font-display text-3xl text-ink sm:text-4xl">
+          New Arrivals
+        </h2>
+        <p className="mt-2 font-sans text-sm text-ink-muted">Just dropped.</p>
 
         <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
           {PRODUCTS.map((product) => (
@@ -47,9 +49,8 @@ export function NewArrivals() {
                   sizes="(max-width: 1024px) 45vw, 300px"
                   className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                 />
-                <NewTag className="right-4 top-4" />
               </div>
-              <p className="mt-4 font-serif text-base text-ink">
+              <p className="mt-4 font-display text-base text-ink">
                 {product.name}
               </p>
               <p className="mt-1 font-sans text-sm text-ink-muted">

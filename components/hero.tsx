@@ -11,10 +11,11 @@ import { useEffect, useRef, useState } from "react";
  * gallery on the right, generously padded top and bottom.
  *
  * The gallery is committed to editorial, not shoppable: campaign photos of
- * models, no captions, no "New" tags, no prices — that language belongs to
- * the New Arrivals grid below, which actually has products and links. Mixing
- * product-card chrome onto mood photography was the muddled version of
- * this; this is the fixed one.
+ * models with a lookbook-style credit line (what's being worn), but no
+ * "New" tags, no prices, no links — that's shopping chrome, and it belongs
+ * to the New Arrivals grid below, which actually has products. A caption
+ * naming the look is just a credit line, the way a magazine spread would
+ * run one; it doesn't turn the gallery into a shoppable surface.
  *
  * Aspect ratio is now a single `aspect-[3/4]` at every breakpoint (only
  * width varies) — the old version hard-coded independent width/height
@@ -32,22 +33,27 @@ const SLIDES = [
   {
     src: "/brand/models/trucker-cap-brick-wall.jpg",
     alt: "Model wearing the DJDN trucker cap, boxy tee, and mesh shorts in bottle green",
+    caption: "Trucker Cap & Boxy Tee — Bottle Green",
   },
   {
     src: "/brand/models/striped-shirt-sunflower-bouquet.jpg",
     alt: "Model wearing the DJDN weekend shirt in pistachio stripe",
+    caption: "The Weekend Shirt — Pistachio Stripe",
   },
   {
     src: "/brand/models/trucker-cap-portrait-brick.jpg",
     alt: "Model wearing the DJDN trucker cap and tee in black",
+    caption: "Trucker Cap & Tee — Black",
   },
   {
     src: "/brand/models/beanie-sunflower-tee.jpg",
     alt: "Model wearing the DJDN ribbed beanie and sunflower graphic tee",
+    caption: "Ribbed Beanie & Graphic Tee — Sunflower",
   },
   {
     src: "/brand/models/bw-crochet-sunflower.jpg",
     alt: "Model wearing the DJDN boxy tee and mesh shorts",
+    caption: "Boxy Tee & Mesh Shorts",
   },
 ];
 
@@ -154,8 +160,7 @@ export function Hero() {
             Dress like you mean it.
           </h1>
           <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-ink-muted">
-            Sophisticated, everyday clothing for men and women — made to move
-            as fast as you do.
+            Sophisticated clothing for men and women, made to move.
           </p>
 
           <div className="mt-9">
@@ -198,6 +203,13 @@ export function Hero() {
                     className="object-cover"
                     priority={copy === 1 && slide === SLIDES[0]}
                   />
+
+                  {/* Credit line, not a product tag — a scrim keeps it legible over any photo */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent px-4 pb-4 pt-10">
+                    <p className="font-sans text-xs font-medium text-white">
+                      {slide.caption}
+                    </p>
+                  </div>
                 </div>
               )),
             )}

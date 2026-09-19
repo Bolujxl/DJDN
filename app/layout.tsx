@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Inter, Unbounded } from "next/font/google";
 import "./globals.css";
 
 /**
- * Fraunces — headlines, product names, the logotype. Loaded self-hosted via
- * next/font/google (no external CDN call, no FOUC). Optical-sizing + a touch
- * of "soft" keeps it characterful without tipping into decorative.
+ * Unbounded — headlines, product names, the logotype. Bold, geometric,
+ * blocky — uniform thick strokes, not a thin/thick contrast serif. Went
+ * through Fraunces (too soft/indie) then Bodoni Moda (a Didone — the
+ * opposite of blocky, all hairline-vs-heavy-stem contrast) before landing
+ * here. Also just fits what the actual product photography shows better:
+ * an oval JDM-badge logo and streetwear silhouettes read as contemporary-
+ * confident, not old-world fashion-magazine — Unbounded matches that.
+ * Self-hosted via next/font/google — no external CDN call, no FOUC.
  */
-const fraunces = Fraunces({
+const displayFont = Unbounded({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-fraunces",
-  style: ["normal", "italic"],
+  variable: "--font-unbounded",
+  weight: ["500", "600", "700", "800"],
 });
 
 /** Inter — body copy, navigation, all cart / checkout / account UI. */
@@ -35,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} h-full`}
+      className={`${displayFont.variable} ${inter.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased">{children}</body>
     </html>

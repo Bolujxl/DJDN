@@ -109,7 +109,7 @@ export function SiteHeader() {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 border-b border-secondary/20 bg-background text-ink"
+      className="sticky top-0 z-50 border-b border-secondary/20 bg-background/75 text-ink backdrop-blur-md"
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Mobile menu trigger */}
