@@ -5,7 +5,7 @@ import { formatNaira } from "@/lib/format";
 
 /**
  * Placeholder catalogue until real products exist in Sanity — but the
- * images are real 3D mockups now (not the earlier single AI-generated
+ * images are real 3D mockups (not the earlier single AI-generated
  * placeholder shared across every card), each showing an actual DJDN design.
  *
  * Sits on `bg-background-alt` — a deeper warm cream than the hero, one step
@@ -14,36 +14,18 @@ import { formatNaira } from "@/lib/format";
  * photography (shot on white) — so the only white on this section is
  * honest white, not a whole section painted white by default.
  *
- * Desktop hover behaves like the filmstrip inspo: hovering a card grows its
- * share of the row (flex-grow, not a transform scale), which pushes its
- * neighbours aside to make room, and everything eases back on mouse-leave.
- * Tuned down further from the inspo's dramatic size jump (grow 1 -> 1.25).
+ * Plain, static 4-up grid — an earlier version made hovered cards grow via
+ * flex-grow (pushing neighbours aside, filmstrip-inspo style). Pulled after
+ * seeing it live: it cost a real amount of debugging (three separate
+ * instances of a card's width change leaking into a height change, which
+ * leaked into the row's height, which pushed the footer) for an effect that
+ * ended up undermining the section rather than helping it. Hover here is
+ * now just a small lift + deepened shadow — safe by construction, since no
+ * card's width or height ever changes, so there's no row-height feedback
+ * loop left for a hover to trigger in the first place.
  *
- * The "lift" is a contained zoom on the photo itself (scale-105, clipped by
- * the card's own overflow-hidden), not a translate on the outer card. An
- * earlier version moved the whole card up with -translate-y-1, which moved
- * its box-shadow along with it — and box-shadow is NOT clipped by an
- * element's own overflow-hidden (only its children are), so the shadow was
- * bleeding past the card's box into the section below with nothing to
- * contain it. Scaling the inner image instead means nothing the card paints
- * ever leaves its own fixed box.
- *
- * Product name is `truncate`d for the same underlying reason, a third time:
- * when a neighbour shrinks (because the hovered card grew), a name that no
- * longer fits its narrower column wraps onto a second line, which grows
- * that card's total height, which grows the row, which pushes the footer.
- * Fixed image height stopped the width->height leak for the photo; this
- * stops it for the text below it the same way, by never letting the text
- * wrap in the first place.
- * Grid stays a plain 2-up on mobile/tablet — there's no hover to drive the
- * effect below `lg`, so it isn't worth the flex-layout complexity there.
- *
- * The image height is fixed (`lg:h-[380px] lg:aspect-auto`) instead of
- * driven by `aspect-[4/5]` at that breakpoint — aspect-ratio computes height
- * from width, so growing width via flex-grow was growing height too, which
- * grew the row, which pushed the footer down and back up on every hover.
- * Fixing the height means flex-grow only ever changes width; the row's
- * total height never moves, so nothing below the section can shift.
+ * `truncate` on the name is a leftover safety net (harmless, costs nothing)
+ * rather than a fix for anything active now that column widths are fixed.
  *
  * No "New" tag on these cards — the section is already titled New Arrivals,
  * so tagging every card "New" too just repeats the section header. NewTag
@@ -83,20 +65,16 @@ export function NewArrivals() {
         </h2>
         <p className="mt-2 font-sans text-sm text-ink-muted">Just dropped.</p>
 
-        <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 lg:flex lg:items-start lg:gap-5">
+        <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
           {PRODUCTS.map((product) => (
-            <Link
-              key={product.name}
-              href="/shop"
-              className="group block lg:min-w-0 lg:flex-1 lg:transition-[flex-grow] lg:duration-500 lg:ease-out lg:hover:grow-[1.25]"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-surface shadow-[0_1px_2px_rgba(28,25,23,0.06)] transition-shadow duration-500 group-hover:shadow-[0_20px_36px_-16px_rgba(28,25,23,0.22)] lg:aspect-auto lg:h-[380px]">
+            <Link key={product.name} href="/shop" className="group block">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-surface shadow-[0_1px_2px_rgba(28,25,23,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_20px_-10px_rgba(28,25,23,0.2)]">
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
-                  sizes="(max-width: 1024px) 45vw, 300px"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 45vw, 320px"
+                  className="object-cover"
                 />
               </div>
               <p className="mt-4 truncate font-display text-base text-ink">
