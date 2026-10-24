@@ -2,23 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * Editorial hero: two portraits flush against each other and the viewport
- * edge, huge tight type beside them, captions in small utility type. No
- * carousel, arrows, dots, cards or radii. Static on purpose, which also makes
- * this a server component with no JS.
+ * Editorial hero: huge tight type on the left, two equal-height colour
+ * portraits flush side by side on the right. A cream-to-transparent gradient
+ * runs down the left edge of the photos, so the headline side dissolves into
+ * the imagery instead of meeting it at a hard edge. Each portrait keeps a
+ * small label over a bottom scrim; the first label is indented past the
+ * gradient so it never sits on the cream. Static on purpose, so this stays a
+ * server component with no JS.
  */
-const LOOKS = [
-  {
-    src: "/brand/models/bw-crochet-sunflower.jpg",
-    alt: "Model in a black DJDN boxy tee and mesh shorts, holding a crochet sunflower",
-    caption: "Boxy tee & mesh shorts",
-  },
-  {
-    src: "/brand/models/striped-shirt-sunflower-bouquet.jpg",
-    alt: "Model wearing the DJDN weekend shirt in pistachio stripe",
-    caption: "The weekend shirt, pistachio stripe",
-  },
-];
+const LABEL =
+  "absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-ink/60 to-transparent px-3 pb-3 pt-10 font-sans text-xs text-white sm:px-4 sm:pb-4";
 
 export function Hero() {
   return (
@@ -33,31 +26,45 @@ export function Hero() {
           </p>
           <Link
             href="/shop"
-            className="mt-8 inline-block rounded-[18px] bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover active:scale-[0.98]"
+            className="mt-8 inline-block rounded-[18px] border border-ink px-7 py-3 font-sans text-sm text-ink transition-colors hover:border-primary hover:bg-primary hover:text-white active:scale-[0.98]"
           >
             Shop Now
           </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:col-span-7">
-        {LOOKS.map((look, index) => (
-          <figure key={look.src} className="relative">
-            <div className="relative aspect-[4/5] lg:aspect-auto lg:h-full">
-              <Image
-                src={look.src}
-                alt={look.alt}
-                fill
-                sizes="(max-width: 1024px) 50vw, 29vw"
-                className="object-cover"
-                priority={index === 0}
-              />
-            </div>
-            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/60 to-transparent px-3 pb-3 pt-10 font-sans text-xs text-white sm:px-4 sm:pb-4">
-              {look.caption}
-            </figcaption>
-          </figure>
-        ))}
+      <div className="relative grid h-[28rem] grid-cols-2 sm:h-[34rem] lg:col-span-7 lg:h-auto">
+        <figure className="relative">
+          <Image
+            src="/brand/models/bw-crochet-sunflower.jpg"
+            alt="Model in a black DJDN boxy tee and mesh shorts, holding a crochet sunflower"
+            fill
+            sizes="(max-width: 1024px) 50vw, 29vw"
+            className="object-cover"
+            priority
+          />
+          <figcaption className={`${LABEL}`}>
+            Boxy tee &amp; mesh shorts
+          </figcaption>
+        </figure>
+
+        <figure className="relative">
+          <Image
+            src="/brand/models/striped-shirt-sunflower-bouquet.jpg"
+            alt="Model wearing the DJDN weekend shirt in pistachio stripe"
+            fill
+            sizes="(max-width: 1024px) 50vw, 29vw"
+            className="object-cover"
+          />
+          <figcaption className={LABEL}>
+            The weekend shirt, pistachio stripe
+          </figcaption>
+        </figure>
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[8%] bg-gradient-to-r from-background/70 to-transparent"
+        />
       </div>
     </section>
   );

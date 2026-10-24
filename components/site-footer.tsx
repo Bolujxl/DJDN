@@ -20,7 +20,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Shop",
     links: [
-      { label: "What's New", href: "/new-arrivals" },
+      { label: "What's new", href: "/new-arrivals" },
       { label: "Men", href: "/shop/men" },
       { label: "Women", href: "/shop/women" },
     ],
@@ -55,13 +55,13 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
 export function SiteFooter() {
   return (
     <footer className="border-t-2 border-primary bg-secondary text-on-secondary">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="px-4 py-16 sm:px-6 lg:px-8">
         {/* Newsletter */}
         <div className="border-b border-white/10 pb-12">
           <p className="font-display text-2xl text-on-secondary sm:text-3xl">
             Join our colony
           </p>
-          <p className="mt-2 max-w-md font-sans text-sm text-on-secondary-muted">
+          <p className="mt-4 max-w-md font-sans text-sm text-on-secondary-muted">
             New arrivals, restocks, and the occasional word from us. No more
             than that.
           </p>
@@ -74,7 +74,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-12 sm:grid-cols-4">
           {COLUMNS.map((column) => (
             <div key={column.title}>
-              <p className="font-sans text-xs uppercase tracking-[0.15em] text-on-secondary-muted">
+              <p className="font-sans text-xs text-on-secondary-muted">
                 {column.title}
               </p>
               <ul className="mt-4 space-y-3">

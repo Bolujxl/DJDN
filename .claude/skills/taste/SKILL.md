@@ -7,7 +7,7 @@ Apply this whenever writing new UI for DJDN, or when asked to review/critique on
 
 ## DJDN's own principles (settled this project, don't relitigate)
 
-- **60/30/10 color balance.** Cream (`--color-background` / `--color-background-alt`) is the dominant ground. Bottle green (`--color-secondary`) is bounded to header/footer/accents — never a full section background by default. Burnt orange (`--color-primary`) is sparing: CTAs and small accents only, never a background fill.
+- **60/30/10 color balance.** Cream (`--color-background` / `--color-background-alt`) is the dominant ground. Bottle green (`--color-secondary`) is bounded to header/footer/accents — never a full section background by default. Burnt orange (`--color-primary`) is sparing: CTAs are thin outlines (ink on cream, white on photos and green) that fill with orange on hover, so orange is a hover and accent moment rather than a resting fill.
 - **Restraint over cleverness.** If an interaction (hover, scale, layout shift) costs real engineering complexity for a marginal effect, cut it. This repo already rolled back a flex-grow hover-push effect for exactly this reason — a plain grid + small lift + shadow was the right call. Default to the simplest interaction that reads as intentional.
 - **Real photography over AI mockups** wherever the brand's premium feel is on the line. Placeholder/AI imagery is a last resort, not a default.
 - **Editorial content isn't shopping chrome.** Lookbook/hero imagery gets a credit line at most (what's being worn) — no price tags, no "New" badges, no links — unless the surface is an actual product grid.

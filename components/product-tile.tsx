@@ -10,10 +10,13 @@ export type TileProduct = {
 };
 
 /**
- * Flush product tile: photo, then name left / price right on one line. No
- * card, radius or shadow; the photo is the object. Hover is a slow zoom of
- * the photo inside its own clipped box, so nothing ever changes size or
- * shifts layout. Keyboard focus gets the same treatment as hover.
+ * Flush product tile: photo, then name with the price beneath it. No card,
+ * radius or shadow; the photo is the object. The text inset uses the page
+ * gutter so the first tile's caption lines up with the section heading above
+ * it, and stacking name over price means a long name wraps instead of
+ * truncating at narrow widths. Hover is a slow zoom of the photo inside its
+ * own clipped box, so nothing ever changes size or shifts layout; keyboard
+ * focus gets the same treatment.
  */
 export function ProductTile({
   product,
@@ -35,9 +38,9 @@ export function ProductTile({
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transition-none"
         />
       </div>
-      <div className="flex items-baseline justify-between gap-3 px-3 py-3 font-sans text-sm">
-        <p className="truncate text-ink">{product.name}</p>
-        <p className="shrink-0 text-ink-muted">{formatNaira(product.price)}</p>
+      <div className="px-4 py-4 font-sans text-sm sm:px-6 lg:px-8">
+        <p className="text-ink">{product.name}</p>
+        <p className="mt-1 text-ink-muted">{formatNaira(product.price)}</p>
       </div>
     </Link>
   );

@@ -22,13 +22,13 @@ export function LookbookBanner() {
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
 
       <div className="relative flex h-full flex-col justify-end px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">
-        <h2 className="max-w-3xl text-5xl leading-[0.95] tracking-[-0.045em] text-white sm:text-7xl">
+        <h2 className="max-w-3xl text-5xl leading-[0.95] tracking-[-0.045em] text-white sm:text-6xl">
           The full look, from this shot.
         </h2>
-        <div className="mt-7">
+        <div className="mt-6">
           <Link
             href="/shop"
-            className="inline-block rounded-[18px] bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover active:scale-[0.98]"
+            className="inline-block rounded-[18px] border border-white px-7 py-3 font-sans text-sm text-white transition-colors hover:border-primary hover:bg-primary active:scale-[0.98]"
           >
             Shop Now
           </Link>

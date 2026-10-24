@@ -23,7 +23,7 @@ type NavDepartment = {
   groups: NavGroup[];
 };
 
-const WHATS_NEW = { label: "What's New", href: "/new-arrivals" };
+const WHATS_NEW = { label: "What's new", href: "/new-arrivals" };
 
 const NAV: NavDepartment[] = [
   {
@@ -109,9 +109,9 @@ export function SiteHeader() {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 border-b border-secondary/20 bg-background/75 text-ink backdrop-blur-md"
+      className="sticky top-0 z-50 border-b border-outline bg-background/75 text-ink backdrop-blur-md"
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Mobile menu trigger */}
         <button
           type="button"
@@ -145,7 +145,7 @@ export function SiteHeader() {
             <li>
               <Link
                 href={WHATS_NEW.href}
-                className="font-sans text-sm font-medium uppercase tracking-[0.12em] text-ink/80 transition-colors hover:text-primary"
+                className="font-sans text-sm text-ink/80 transition-colors hover:text-primary"
               >
                 {WHATS_NEW.label}
               </Link>
@@ -164,7 +164,7 @@ export function SiteHeader() {
                   onClick={() =>
                     setOpenDept((v) => (v === dept.label ? null : dept.label))
                   }
-                  className="font-sans text-sm font-medium uppercase tracking-[0.12em] text-ink/80 transition-colors hover:text-primary"
+                  className="font-sans text-sm text-ink/80 transition-colors hover:text-primary"
                 >
                   {dept.label}
                 </button>
@@ -175,7 +175,7 @@ export function SiteHeader() {
                       <div className="grid grid-cols-2 gap-8">
                         {dept.groups.map((group) => (
                           <div key={group.title}>
-                            <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-muted">
+                            <p className="font-sans text-xs text-ink-muted">
                               {group.title}
                             </p>
                             <ul className="mt-3 space-y-2.5">
@@ -244,7 +244,7 @@ export function SiteHeader() {
                 <Link
                   href={WHATS_NEW.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block py-3 font-sans text-base font-medium uppercase tracking-[0.08em] text-ink transition-colors hover:text-primary"
+                  className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
                 >
                   {WHATS_NEW.label}
                 </Link>
@@ -278,7 +278,7 @@ function MobileDept({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded py-3 font-sans text-base font-medium uppercase tracking-[0.08em] text-ink transition-colors hover:text-primary"
+        className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors hover:text-primary"
       >
         {dept.label}
         <span className={`transition-transform ${open ? "rotate-45" : ""}`}>
@@ -289,7 +289,7 @@ function MobileDept({
         <div className="grid grid-cols-2 gap-6 pb-4">
           {dept.groups.map((group) => (
             <div key={group.title}>
-              <p className="font-sans text-xs uppercase tracking-[0.15em] text-ink-muted">
+              <p className="font-sans text-xs text-ink-muted">
                 {group.title}
               </p>
               <ul className="mt-3 space-y-2.5">
