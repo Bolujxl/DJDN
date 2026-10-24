@@ -1,29 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Unbounded } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
 /**
- * Unbounded — headlines, product names, the logotype. Bold, geometric,
- * blocky — uniform thick strokes, not a thin/thick contrast serif. Went
- * through Fraunces (too soft/indie) then Bodoni Moda (a Didone — the
- * opposite of blocky, all hairline-vs-heavy-stem contrast) before landing
- * here. Also just fits what the actual product photography shows better:
- * an oval JDM-badge logo and streetwear silhouettes read as contemporary-
- * confident, not old-world fashion-magazine — Unbounded matches that.
- * Self-hosted via next/font/google — no external CDN call, no FOUC.
+ * Geist — one tight grotesque for everything (display, UI, body). The
+ * editorial references (Rains, about:blank) all lean on a single neutral
+ * grotesque with hierarchy carried by size and weight, not by pairing a
+ * second family. Replaced Unbounded, whose wide geometric blocks read as
+ * sporty/tech rather than fashion.
  */
-const displayFont = Unbounded({
+const geist = Geist({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-unbounded",
-  weight: ["500", "600", "700", "800"],
-});
-
-/** Inter — body copy, navigation, all cart / checkout / account UI. */
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+  variable: "--font-geist",
 });
 
 export const metadata: Metadata = {
@@ -38,10 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${displayFont.variable} ${inter.variable} h-full`}
-    >
+    <html lang="en" className={`${geist.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">{children}</body>
     </html>
   );

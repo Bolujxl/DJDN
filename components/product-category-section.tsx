@@ -1,59 +1,73 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import { formatNaira } from "@/lib/format";
-
-export type CategoryProduct = {
-  name: string;
-  price: number;
-  image: string;
-};
+import { ProductTile, type TileProduct } from "./product-tile";
 
 /**
- * Shared grid for the homepage's per-category sections (Shirts, Shorts, ...).
- * Deliberately reuses New Arrivals' settled-on pattern — plain static grid,
- * small lift + shadow on hover — rather than the flex-grow push/expand
- * interaction that section went through and dropped. That one cost real
- * debugging for a result that ended up undermining the section; no reason
- * to reintroduce it here.
+ * Editorial category spread: one large lead photo beside a text block and the
+ * remaining products as flush tiles. When the remaining count is odd, the last
+ * tile runs wide so the grid never ends on an empty cell. `reverse` flips the
+ * sides so consecutive categories don't repeat the same composition.
  */
 export function ProductCategorySection({
   title,
   subtitle,
   products,
-  background = "bg-background",
+  reverse = false,
 }: {
   title: string;
   subtitle: string;
-  products: CategoryProduct[];
-  background?: "bg-background" | "bg-background-alt";
+  products: TileProduct[];
+  reverse?: boolean;
 }) {
-  return (
-    <section className={`border-t border-outline ${background}`}>
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <h2 className="font-display text-3xl text-ink sm:text-4xl">{title}</h2>
-        <p className="mt-2 font-sans text-sm text-ink-muted">{subtitle}</p>
+  const [lead, ...rest] = products;
+  const hasWide = rest.length % 2 === 1;
+  const smallAspect = hasWide ? "aspect-square" : "aspect-[4/5]";
 
-        <div className="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-          {products.map((product) => (
-            <Link key={product.name} href="/shop" className="group block">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-surface shadow-[0_1px_2px_rgba(28,25,23,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_20px_-10px_rgba(28,25,23,0.2)]">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 1024px) 45vw, 320px"
-                  className="object-cover"
-                />
-              </div>
-              <p className="mt-4 truncate font-display text-base text-ink">
-                {product.name}
-              </p>
-              <p className="mt-1 font-sans text-sm text-ink-muted">
-                {formatNaira(product.price)}
-              </p>
+  return (
+    <section className="bg-background">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        <div className={reverse ? "lg:order-2" : ""}>
+          <ProductTile
+            product={lead}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            aspect="aspect-[4/5]"
+          />
+        </div>
+
+        <div
+          className={`flex flex-col justify-between ${
+            reverse ? "lg:order-1" : ""
+          }`}
+        >
+          <div className="px-4 pb-10 pt-12 sm:px-6 lg:px-8">
+            <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
+              {title}
+            </h2>
+            <p className="mt-4 max-w-xs font-sans text-sm leading-relaxed text-ink-muted">
+              {subtitle}
+            </p>
+            <Link
+              href="/shop"
+              className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              View all {title.toLowerCase()}
             </Link>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-2">
+            {rest.map((product, index) => {
+              const isWide = hasWide && index === rest.length - 1;
+              return (
+                <div key={product.name} className={isWide ? "col-span-2" : ""}>
+                  <ProductTile
+                    product={product}
+                    sizes={isWide ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 1024px) 50vw, 25vw"}
+                    aspect={isWide ? "aspect-[2/1]" : smallAspect}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

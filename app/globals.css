@@ -24,17 +24,18 @@
   --color-on-secondary: #f4f0e7;
   --color-on-secondary-muted: #b8c4bb;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  /* Not a serif — Unbounded is a bold geometric display face. Named
-     font-display (not font-serif) so the token means what it says. */
-  --font-display: var(--font-unbounded), Arial Black, "Helvetica Neue", Impact,
-    sans-serif;
+  /* Same family as sans: editorial hierarchy comes from scale, weight and
+     tight tracking, not a second typeface. Token kept separate so headings
+     can diverge later without touching every usage. */
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
 
-  /* Unbounded headline scale — bold and blocky does the "taste" work at large sizes */
-  --text-display: clamp(2.25rem, 4.5vw, 3.75rem);
-  --text-display--line-height: 1.02;
-  --text-display--letter-spacing: -0.02em;
+  /* Editorial headline scale — big and tight */
+  --text-display: clamp(3rem, 9vw, 7.5rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.045em;
 
   --tracking-tight: -0.011em;
 }
@@ -61,8 +62,8 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: var(--text-display--letter-spacing);
+    font-weight: 500;
+    letter-spacing: -0.03em;
   }
 
   ::selection {

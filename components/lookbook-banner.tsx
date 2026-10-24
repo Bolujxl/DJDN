@@ -10,7 +10,7 @@ import Link from "next/link";
  */
 export function LookbookBanner() {
   return (
-    <section className="relative h-[520px] overflow-hidden bg-ink sm:h-[600px]">
+    <section className="relative aspect-[4/5] w-full overflow-hidden bg-ink sm:aspect-[16/9] sm:max-h-[760px]">
       <Image
         src="/brand/lookbook/banner-dynamic-crouch.jpg"
         alt="DJDN model in the Weekend Popover and khaki cargo shorts"
@@ -21,17 +21,14 @@ export function LookbookBanner() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
 
-      <div className="relative flex h-full max-w-7xl flex-col justify-end px-4 pb-14 mx-auto sm:px-6 lg:px-8">
-        <p className="font-sans text-xs uppercase tracking-[0.2em] text-on-secondary-muted">
-          The Lookbook
-        </p>
-        <h2 className="mt-3 max-w-md font-display text-3xl text-on-secondary sm:text-4xl">
-          Considered, not chased.
+      <div className="relative flex h-full flex-col justify-end px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">
+        <h2 className="max-w-3xl text-5xl leading-[0.95] tracking-[-0.045em] text-white sm:text-7xl">
+          The full look, from this shot.
         </h2>
         <div className="mt-7">
           <Link
             href="/shop"
-            className="inline-block rounded-[18px] bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+            className="inline-block rounded-[18px] bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary-hover active:scale-[0.98]"
           >
             Shop Now
           </Link>

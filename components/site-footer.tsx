@@ -62,7 +62,7 @@ export function SiteFooter() {
             Join our colony
           </p>
           <p className="mt-2 max-w-md font-sans text-sm text-on-secondary-muted">
-            New arrivals, restocks, and the occasional word from us — no more
+            New arrivals, restocks, and the occasional word from us. No more
             than that.
           </p>
           <div className="mt-6">

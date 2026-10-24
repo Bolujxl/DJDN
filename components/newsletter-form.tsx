@@ -62,7 +62,7 @@ export function NewsletterForm() {
       </button>
       {status === "error" && (
         <p className="font-sans text-xs text-error sm:absolute" role="alert">
-          Something went wrong — try again.
+          Something went wrong. Try again.
         </p>
       )}
     </form>

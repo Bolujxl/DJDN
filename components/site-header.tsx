@@ -115,7 +115,7 @@ export function SiteHeader() {
         {/* Mobile menu trigger */}
         <button
           type="button"
-          className="-ml-2 rounded-full p-2 transition-colors hover:bg-secondary/8 lg:hidden"
+          className="-ml-2 rounded-full p-3 transition-colors hover:bg-secondary/8 lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((v) => !v)}
@@ -214,21 +214,21 @@ export function SiteHeader() {
           <button
             type="button"
             aria-label="Search"
-            className="rounded-full p-2 text-ink transition-colors hover:bg-secondary/8"
+            className="rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
           >
             <SearchIcon />
           </button>
           <Link
             href="/account"
             aria-label="Account"
-            className="rounded-full p-2 text-ink transition-colors hover:bg-secondary/8"
+            className="rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
           >
             <AccountIcon />
           </Link>
           <Link
             href="/cart"
             aria-label="Cart"
-            className="relative rounded-full p-2 text-ink transition-colors hover:bg-secondary/8"
+            className="relative rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
           >
             <BagIcon />
           </Link>

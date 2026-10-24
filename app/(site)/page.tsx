@@ -60,13 +60,12 @@ export default function Home() {
         title="Shirts"
         subtitle="Swirl prints and weekend staples."
         products={SHIRTS}
-        background="bg-background"
       />
       <ProductCategorySection
         title="Shorts"
         subtitle="Corduroy and cargo, built to move."
         products={SHORTS}
-        background="bg-background-alt"
+        reverse
       />
       <HoodiesComingSoon />
     </>
