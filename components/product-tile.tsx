@@ -27,13 +27,20 @@ export function ProductTile({
   product: TileProduct;
   sizes: string;
   aspect?: string;
-  /** At `lg`, fill the parent's height instead of holding the aspect ratio. */
+  /**
+   * At `lg`, fill the nearest positioned ancestor exactly (absolute inset-0)
+   * instead of holding the aspect ratio. The tile then adds nothing to its
+   * parent's height, so a neighbouring column alone decides the row height
+   * and the two can never differ.
+   */
   stretch?: boolean;
 }) {
   return (
     <Link
       href="/shop"
-      className={`group block ${stretch ? "lg:flex lg:h-full lg:flex-col" : ""}`}
+      className={`group block bg-surface ${
+        stretch ? "lg:absolute lg:inset-0 lg:flex lg:flex-col" : ""
+      }`}
     >
       <div
         className={`relative overflow-hidden bg-surface ${aspect} ${
@@ -50,7 +57,9 @@ export function ProductTile({
       </div>
       <div className="px-4 py-4 font-sans text-sm sm:px-6 lg:px-8">
         <p className="text-ink">{product.name}</p>
-        <p className="mt-1 text-ink-muted">{formatNaira(product.price)}</p>
+        <p className="mt-1 tabular-nums text-ink-muted">
+          {formatNaira(product.price)}
+        </p>
       </div>
     </Link>
   );

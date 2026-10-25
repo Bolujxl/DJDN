@@ -48,8 +48,8 @@ export function ProductCategorySection({
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2">
-        <div className={reverse ? "lg:order-2" : ""}>
+      <div className="grid grid-cols-1 gap-px bg-outline lg:grid-cols-2">
+        <div className={`relative ${reverse ? "lg:order-2" : ""}`}>
           <ProductTile
             product={lead}
             sizes="(max-width: 1024px) 100vw, 50vw"
@@ -58,7 +58,7 @@ export function ProductCategorySection({
           />
         </div>
 
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-px bg-outline">
           {rest.map((product, index) => {
             const isWide = allWide || (hasWide && index === rest.length - 1);
             return (
