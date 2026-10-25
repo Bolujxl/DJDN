@@ -24,12 +24,11 @@
   --color-on-secondary: #f4f0e7;
   --color-on-secondary-muted: #b8c4bb;
 
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
+  /* Inter carries subtext, body and UI copy. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  /* Same family as sans: editorial hierarchy comes from scale, weight and
-     tight tracking, not a second typeface. Token kept separate so headings
-     can diverge later without touching every usage. */
-  --font-display: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
+  /* Switzer carries headings and display type. */
+  --font-display: var(--font-switzer), ui-sans-serif, system-ui, -apple-system,
     "Helvetica Neue", Arial, sans-serif;
 
   /* Editorial headline scale — big and tight */

@@ -6,7 +6,7 @@
  */
 export function HoodiesComingSoon() {
   return (
-    <section className="bg-background py-16 lg:py-24">
+    <section className="bg-surface py-16 lg:py-24">
       <div className="flex items-end justify-between px-4 sm:px-6 lg:px-8">
         <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
           Hoodies

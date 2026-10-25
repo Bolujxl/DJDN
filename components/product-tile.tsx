@@ -22,14 +22,24 @@ export function ProductTile({
   product,
   sizes,
   aspect = "aspect-[4/5]",
+  stretch = false,
 }: {
   product: TileProduct;
   sizes: string;
   aspect?: string;
+  /** At `lg`, fill the parent's height instead of holding the aspect ratio. */
+  stretch?: boolean;
 }) {
   return (
-    <Link href="/shop" className="group block">
-      <div className={`relative overflow-hidden bg-surface ${aspect}`}>
+    <Link
+      href="/shop"
+      className={`group block ${stretch ? "lg:flex lg:h-full lg:flex-col" : ""}`}
+    >
+      <div
+        className={`relative overflow-hidden bg-surface ${aspect} ${
+          stretch ? "lg:aspect-auto lg:min-h-0 lg:flex-1" : ""
+        }`}
+      >
         <Image
           src={product.image}
           alt={product.name}

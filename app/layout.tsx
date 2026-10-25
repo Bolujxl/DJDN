@@ -1,18 +1,28 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 /**
- * Geist — one tight grotesque for everything (display, UI, body). The
- * editorial references (Rains, about:blank) all lean on a single neutral
- * grotesque with hierarchy carried by size and weight, not by pairing a
- * second family. Replaced Unbounded, whose wide geometric blocks read as
- * sporty/tech rather than fashion.
+ * Switzer: headings and display type. Self-hosted from app/fonts (Fontshare
+ * free licence allows self-hosting). Three weights only: Regular, Medium
+ * (the default heading weight) and Semibold.
  */
-const geist = Geist({
+const switzer = localFont({
+  src: [
+    { path: "./fonts/Switzer-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Switzer-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Switzer-Semibold.woff2", weight: "600", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-switzer",
+});
+
+/** Inter: subtext, body copy, navigation and all cart/checkout/account UI. */
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-geist",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geist.variable} h-full`}>
+    <html lang="en" className={`${switzer.variable} ${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">{children}</body>
     </html>
   );

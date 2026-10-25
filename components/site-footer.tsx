@@ -26,28 +26,39 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     ],
   },
   {
-    title: "Customer Care",
+    title: "Customer services",
     links: [
+      { label: "Customer care", href: "/customer-care" },
       { label: "Shipping", href: "/customer-care#shipping" },
-      { label: "Orders & Payment", href: "/customer-care#orders-and-payment" },
-      { label: "Returns", href: "/customer-care#returns" },
+      { label: "Orders & payment", href: "/customer-care#orders-and-payment" },
+      { label: "Return policy", href: "/customer-care#returns" },
       { label: "FAQ", href: "/customer-care#faq" },
-      { label: "Contact Us", href: "/contact" },
+      { label: "My account", href: "/account" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "/about" },
+      { label: "About us", href: "/about" },
       { label: "Careers", href: "/careers" },
-      { label: "Journal", href: "/journal" },
+      { label: "Contact us", href: "/contact" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {
-    title: "Legal",
+    title: "Policies",
     links: [
-      { label: "Privacy Policy", href: "/policies/privacy" },
-      { label: "Terms of Service", href: "/policies/terms" },
+      { label: "Privacy policy", href: "/policies/privacy" },
+      { label: "Terms of service", href: "/policies/terms" },
+    ],
+  },
+  {
+    title: "Follow",
+    links: [
+      { label: "Instagram", href: "https://instagram.com/djdn.ng" },
+      { label: "TikTok", href: "https://www.tiktok.com/@djdn.ng" },
+      { label: "X", href: "#" },
+      { label: "WhatsApp", href: "#" },
     ],
   },
 ];
@@ -71,23 +82,35 @@ export function SiteFooter() {
         </div>
 
         {/* Link columns */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-12 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-12 sm:grid-cols-3 lg:grid-cols-5">
           {COLUMNS.map((column) => (
             <div key={column.title}>
               <p className="font-sans text-xs text-on-secondary-muted">
                 {column.title}
               </p>
               <ul className="mt-4 space-y-3">
-                {column.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="font-sans text-sm text-on-secondary/90 transition-colors hover:text-primary"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {column.links.map((link) => {
+                  const className =
+                    "font-sans text-sm text-on-secondary/90 transition-colors hover:text-primary";
+                  return (
+                    <li key={link.label}>
+                      {link.href.startsWith("http") ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={className}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link href={link.href} className={className}>
+                          {link.label}
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

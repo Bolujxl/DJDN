@@ -5,30 +5,35 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Primary nav data. Placeholder categories matching the shape of Sanity's
- * `category` schema (title + department) — swap for a live query once the
- * Studio has real categories. Structure/IA is modelled on Ashluxury's nav:
- * a couple of department links, each opening a mega-menu of grouped
- * subcategories. Everything else (About, Journal, Contact…) lives in the
- * footer, not here — that's what keeps this "uncluttered".
+ * Primary nav: shopping and content only (What's new, Men, Women, Blog), the
+ * same on every screen size. Service, company and policy links live in the
+ * footer, where shoppers look for them; keeping them out of the header keeps
+ * the top bar quiet. A branch (Men, Women) opens a panel that draws its
+ * children as an org chart (parent label, sub-branch title, then leaves
+ * hanging off thin connector lines). Category links are placeholders
+ * matching the shape of Sanity's `category` schema until the Studio has real
+ * data.
  *
- * Colour: cream-dominant, not a green fill — green only survives as the
- * logo text and a single thin bottom border, per the 60/30/10 balance
- * (neutral dominates; green and orange are moves, not backdrops).
+ * Colour: cream-dominant, with hairlines in `outline`. Orange appears only
+ * as the hover colour on links.
  */
-type NavGroup = { title: string; links: { label: string; href: string }[] };
-type NavDepartment = {
+type NavLink = { label: string; href: string };
+type NavGroup = { title?: string; links: NavLink[] };
+type NavLeaf = { label: string; href: string; groups?: undefined };
+type NavBranch = {
   label: string;
-  href: string;
+  href?: string;
   groups: NavGroup[];
+  showAll?: boolean;
 };
+type NavItem = NavLeaf | NavBranch;
 
-const WHATS_NEW = { label: "What's new", href: "/new-arrivals" };
-
-const NAV: NavDepartment[] = [
+const NAV: NavItem[] = [
+  { label: "What's new", href: "/new-arrivals" },
   {
     label: "Men",
     href: "/shop/men",
+    showAll: true,
     groups: [
       {
         title: "Clothing",
@@ -51,6 +56,7 @@ const NAV: NavDepartment[] = [
   {
     label: "Women",
     href: "/shop/women",
+    showAll: true,
     groups: [
       {
         title: "Clothing",
@@ -70,7 +76,45 @@ const NAV: NavDepartment[] = [
       },
     ],
   },
+  { label: "Blog", href: "/blog" },
 ];
+
+/** Org-chart rendering of a branch: groups side by side, leaves on connector lines. */
+function NavTree({
+  item,
+  onNavigate,
+}: {
+  item: NavBranch;
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-x-10 gap-y-6">
+      {item.groups.map((group, index) => (
+        <div key={group.title ?? index} className="min-w-[8rem]">
+          {group.title && (
+            <p className="font-sans text-xs text-ink-muted">{group.title}</p>
+          )}
+          <ul className={`border-l border-outline ${group.title ? "mt-2" : ""}`}>
+            {group.links.map((link) => (
+              <li
+                key={link.href}
+                className="relative pl-4 before:absolute before:left-0 before:top-1/2 before:w-2.5 before:border-t before:border-outline"
+              >
+                <Link
+                  href={link.href}
+                  onClick={onNavigate}
+                  className="block py-1.5 font-sans text-sm text-ink transition-colors hover:text-primary"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function SiteHeader() {
   const [openDept, setOpenDept] = useState<string | null>(null);
@@ -139,73 +183,63 @@ export function SiteHeader() {
           />
         </Link>
 
-        {/* Primary nav — desktop */}
+        {/* Primary nav, desktop */}
         <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-8">
-            <li>
-              <Link
-                href={WHATS_NEW.href}
-                className="font-sans text-sm text-ink/80 transition-colors hover:text-primary"
-              >
-                {WHATS_NEW.label}
-              </Link>
-            </li>
-            {NAV.map((dept) => (
-              <li
-                key={dept.label}
-                className="relative"
-                onMouseEnter={() => setOpenDept(dept.label)}
-                onMouseLeave={() => setOpenDept(null)}
-              >
-                <button
-                  type="button"
-                  aria-haspopup="true"
-                  aria-expanded={openDept === dept.label}
-                  onClick={() =>
-                    setOpenDept((v) => (v === dept.label ? null : dept.label))
-                  }
-                  className="font-sans text-sm text-ink/80 transition-colors hover:text-primary"
+          <ul className="flex items-center gap-6 xl:gap-8">
+            {NAV.map((item) =>
+              item.groups ? (
+                <li
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => setOpenDept(item.label)}
+                  onMouseLeave={() => setOpenDept(null)}
                 >
-                  {dept.label}
-                </button>
+                  <button
+                    type="button"
+                    aria-haspopup="true"
+                    aria-expanded={openDept === item.label}
+                    onClick={() =>
+                      setOpenDept((v) => (v === item.label ? null : item.label))
+                    }
+                    className="whitespace-nowrap font-sans text-sm text-ink/80 transition-colors hover:text-primary"
+                  >
+                    {item.label}
+                  </button>
 
-                {openDept === dept.label && (
-                  <div className="absolute left-1/2 top-full w-[28rem] -translate-x-1/2 pt-4">
-                    <div className="rounded-lg border border-secondary/15 bg-surface p-8 text-ink shadow-[0_16px_32px_-12px_rgba(28,25,23,0.14)]">
-                      <div className="grid grid-cols-2 gap-8">
-                        {dept.groups.map((group) => (
-                          <div key={group.title}>
-                            <p className="font-sans text-xs text-ink-muted">
-                              {group.title}
-                            </p>
-                            <ul className="mt-3 space-y-2.5">
-                              {group.links.map((link) => (
-                                <li key={link.href}>
-                                  <Link
-                                    href={link.href}
-                                    onClick={() => setOpenDept(null)}
-                                    className="font-sans text-sm text-ink transition-colors hover:text-primary"
-                                  >
-                                    {link.label}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                  {openDept === item.label && (
+                    <div className="absolute left-1/2 top-full w-max -translate-x-1/2 pt-4">
+                      <div className="min-w-[14rem] rounded-lg border border-outline bg-surface p-6 text-ink shadow-[0_16px_32px_-12px_rgba(28,25,23,0.14)]">
+                        <p className="mb-3 font-sans text-sm font-medium text-ink">
+                          {item.label}
+                        </p>
+                        <NavTree
+                          item={item}
+                          onNavigate={() => setOpenDept(null)}
+                        />
+                        {item.showAll && item.href && (
+                          <Link
+                            href={item.href}
+                            onClick={() => setOpenDept(null)}
+                            className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                          >
+                            Shop all {item.label.toLowerCase()}
+                          </Link>
+                        )}
                       </div>
-                      <Link
-                        href={dept.href}
-                        onClick={() => setOpenDept(null)}
-                        className="mt-8 inline-block font-sans text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-                      >
-                        Shop all {dept.label} →
-                      </Link>
                     </div>
-                  </div>
-                )}
-              </li>
-            ))}
+                  )}
+                </li>
+              ) : (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="whitespace-nowrap font-sans text-sm text-ink/80 transition-colors hover:text-primary"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
         </nav>
 
@@ -235,27 +269,30 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobile nav — full-screen overlay */}
+      {/* Mobile nav, full-screen overlay */}
       {mobileOpen && (
         <div className="fixed inset-x-0 bottom-0 top-20 overflow-y-auto bg-background lg:hidden">
           <nav aria-label="Primary" className="px-4 py-6 sm:px-6">
-            <ul className="divide-y divide-secondary/12">
-              <li className="py-2">
-                <Link
-                  href={WHATS_NEW.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
-                >
-                  {WHATS_NEW.label}
-                </Link>
-              </li>
-              {NAV.map((dept) => (
-                <MobileDept
-                  key={dept.label}
-                  dept={dept}
-                  onNavigate={() => setMobileOpen(false)}
-                />
-              ))}
+            <ul className="divide-y divide-outline">
+              {NAV.map((item) =>
+                item.groups ? (
+                  <MobileBranch
+                    key={item.label}
+                    item={item}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                ) : (
+                  <li key={item.label} className="py-2">
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ),
+              )}
             </ul>
           </nav>
         </div>
@@ -264,11 +301,11 @@ export function SiteHeader() {
   );
 }
 
-function MobileDept({
-  dept,
+function MobileBranch({
+  item,
   onNavigate,
 }: {
-  dept: NavDepartment;
+  item: NavBranch;
   onNavigate: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -280,47 +317,30 @@ function MobileDept({
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors hover:text-primary"
       >
-        {dept.label}
+        {item.label}
         <span className={`transition-transform ${open ? "rotate-45" : ""}`}>
           <PlusIcon />
         </span>
       </button>
       {open && (
-        <div className="grid grid-cols-2 gap-6 pb-4">
-          {dept.groups.map((group) => (
-            <div key={group.title}>
-              <p className="font-sans text-xs text-ink-muted">
-                {group.title}
-              </p>
-              <ul className="mt-3 space-y-2.5">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={onNavigate}
-                      className="font-sans text-sm text-ink/85 transition-colors hover:text-primary"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          <Link
-            href={dept.href}
-            onClick={onNavigate}
-            className="col-span-2 font-sans text-sm font-medium text-primary transition-colors hover:text-primary-hover"
-          >
-            Shop all {dept.label} →
-          </Link>
+        <div className="pb-4 pl-1">
+          <NavTree item={item} onNavigate={onNavigate} />
+          {item.showAll && item.href && (
+            <Link
+              href={item.href}
+              onClick={onNavigate}
+              className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              Shop all {item.label.toLowerCase()}
+            </Link>
+          )}
         </div>
       )}
     </li>
   );
 }
 
-/* ---- Icons — hand-rolled, no icon-library dependency ---- */
+/* ---- Icons: hand-rolled, no icon-library dependency ---- */
 
 function MenuIcon() {
   return (
