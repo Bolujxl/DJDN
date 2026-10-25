@@ -1,36 +1,22 @@
 import Link from "next/link";
 
+import { tileFor } from "@/lib/catalogue";
+
 import { ProductTile, type TileProduct } from "./product-tile";
 
 /**
- * Placeholder catalogue until real products exist in Sanity. Flush, full-bleed
- * 4-up tiles with no gaps (Rains / about:blank reference): the grid itself is
- * the structure, so there are no cards or section borders. Product photos are
- * shot on white, so the section sits on white and the tiles read as one
- * continuous wall of photography.
+ * Flush, full-bleed 4-up tiles with no gaps (Rains / about:blank reference):
+ * the grid itself is the structure, so there are no cards or section borders.
+ * Product photos are shot on white, so the section sits on white and the
+ * tiles read as one continuous wall of photography. Products come from the
+ * shared catalogue; the popover leads with the bare product (the other three
+ * only have that view) and swaps to the model on hover.
  */
 const PRODUCTS: TileProduct[] = [
-  {
-    name: "Track Jacket — Bottle Green",
-    price: 5200000,
-    image: "/brand/products/green-track-jacket.jpg",
-  },
-  {
-    name: "Swirl Jersey — Green",
-    price: 3400000,
-    image: "/brand/products/swirl-jersey-green.jpg",
-  },
-  {
-    name: "Floral Wordmark Tank",
-    price: 2400000,
-    image: "/brand/products/floral-wordmark-tank.jpg",
-  },
-  {
-    name: "Linen Popover Shirt — Cream",
-    price: 3800000,
-    image: "/brand/products/linen-popover-cream.jpg",
-    hoverImage: "/brand/lookbook/shirt-weekend-popover-cream.jpg",
-  },
+  tileFor("track-jacket", "Bottle Green"),
+  tileFor("swirl-jersey", "Green"),
+  tileFor("floral-wordmark-tank", "White"),
+  tileFor("weekend-popover", "Cream", { productFirst: true }),
 ];
 
 export function NewArrivals() {
@@ -41,7 +27,7 @@ export function NewArrivals() {
           New arrivals
         </h2>
         <Link
-          href="/shop"
+          href="/new-arrivals"
           className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
         >
           View all
