@@ -29,6 +29,7 @@ const PRODUCTS: TileProduct[] = [
     name: "Linen Popover Shirt — Cream",
     price: 3800000,
     image: "/brand/products/linen-popover-cream.jpg",
+    hoverImage: "/brand/lookbook/shirt-weekend-popover-cream.jpg",
   },
 ];
 

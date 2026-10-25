@@ -119,7 +119,46 @@ function NavTree({
 export function SiteHeader() {
   const [openDept, setOpenDept] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+
+  // Hide on scroll down, show on scroll up. The anchor resets whenever the
+  // direction flips, so slow scrolling still triggers (per-event deltas can be
+  // 1px) without flickering on tiny back-and-forth movement.
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let anchorY = lastY;
+    let direction = 0;
+    let frame = 0;
+
+    function update() {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+      const next = delta > 0 ? 1 : delta < 0 ? -1 : direction;
+      if (next !== direction) {
+        direction = next;
+        anchorY = y;
+      }
+      if (y < 80) setHidden(false);
+      else if (direction === 1 && y - anchorY > 24) setHidden(true);
+      else if (direction === -1 && anchorY - y > 12) setHidden(false);
+    }
+
+    function onScroll() {
+      if (!frame) frame = requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Never tuck the header away while a menu is open.
+  const tucked = hidden && !mobileOpen && openDept === null;
 
   // Close the mega-menu on outside click or Escape.
   useEffect(() => {
@@ -151,9 +190,13 @@ export function SiteHeader() {
   }, [mobileOpen]);
 
   return (
+    <>
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 border-b border-outline bg-background/75 text-ink backdrop-blur-md"
+      onFocus={() => setHidden(false)}
+      className={`sticky top-0 z-50 border-b border-outline bg-background/75 text-ink backdrop-blur-md transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        tucked ? "-translate-y-full" : ""
+      }`}
     >
       <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Mobile menu trigger */}
@@ -268,10 +311,13 @@ export function SiteHeader() {
           </Link>
         </div>
       </div>
+    </header>
 
-      {/* Mobile nav, full-screen overlay */}
+      {/* Mobile nav, full-screen overlay. Sits outside the header on purpose:
+          a transformed ancestor becomes the containing block for `fixed`
+          children, which would break this overlay while the header slides. */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-20 overflow-y-auto bg-background lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-background lg:hidden">
           <nav aria-label="Primary" className="px-4 py-6 sm:px-6">
             <ul className="divide-y divide-outline">
               {NAV.map((item) =>
@@ -297,7 +343,7 @@ export function SiteHeader() {
           </nav>
         </div>
       )}
-    </header>
+    </>
   );
 }
 

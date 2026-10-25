@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Settle } from "./settle";
+
 /**
  * Full-bleed break between the New Arrivals grid and the per-category
  * sections (Shirts/Shorts/Hoodies) — a deliberate transition moment rather
@@ -11,14 +13,16 @@ import Link from "next/link";
 export function LookbookBanner() {
   return (
     <section className="relative aspect-[4/5] w-full overflow-hidden bg-ink sm:aspect-[16/9] sm:max-h-[760px]">
-      <Image
-        src="/brand/lookbook/banner-dynamic-crouch.jpg"
-        alt="DJDN model in the Weekend Popover and khaki cargo shorts"
-        fill
-        sizes="100vw"
-        className="object-cover object-top"
-        priority={false}
-      />
+      <Settle>
+        <Image
+          src="/brand/lookbook/banner-dynamic-crouch.jpg"
+          alt="DJDN model in the Weekend Popover and khaki cargo shorts"
+          fill
+          sizes="100vw"
+          className="object-cover object-top"
+          priority={false}
+        />
+      </Settle>
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
 
       <div className="relative flex h-full flex-col justify-end px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8">

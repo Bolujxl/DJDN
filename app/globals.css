@@ -43,6 +43,40 @@
   color-scheme: light;
 }
 
+/* Hero load-in. Text rises into place in a short stagger (--d is the delay);
+   photos settle from slightly larger, with no fade so the main image is
+   painted immediately. Only translate, opacity and scale are animated, and
+   everything is off under reduced motion. */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes hero-settle {
+  from {
+    scale: 1.05;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-rise {
+    animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+  }
+
+  .hero-settle {
+    animation: hero-settle 1.4s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+  }
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
