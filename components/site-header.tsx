@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { useCart } from "./cart-provider";
+
 /**
  * Primary nav: shopping and content only (What's new, Men, Women, Blog), the
  * same on every screen size. Service, company and policy links live in the
@@ -36,19 +38,11 @@ const NAV: NavItem[] = [
     showAll: true,
     groups: [
       {
-        title: "Clothing",
         links: [
-          { label: "Shirts", href: "/shop/men/shirts" },
-          { label: "Trousers", href: "/shop/men/trousers" },
-          { label: "Outerwear", href: "/shop/men/outerwear" },
-          { label: "Knitwear", href: "/shop/men/knitwear" },
-        ],
-      },
-      {
-        title: "More",
-        links: [
-          { label: "Accessories", href: "/shop/men/accessories" },
-          { label: "New arrivals", href: "/shop/men?sort=new" },
+          { label: "Tops", href: "/shop/men/tops" },
+          { label: "Pants", href: "/shop/men/pants" },
+          { label: "Sweats", href: "/shop/men/sweats" },
+          { label: "Head gear", href: "/shop/men/head-gear" },
         ],
       },
     ],
@@ -59,19 +53,11 @@ const NAV: NavItem[] = [
     showAll: true,
     groups: [
       {
-        title: "Clothing",
         links: [
           { label: "Tops", href: "/shop/women/tops" },
-          { label: "Trousers", href: "/shop/women/trousers" },
-          { label: "Dresses", href: "/shop/women/dresses" },
-          { label: "Outerwear", href: "/shop/women/outerwear" },
-        ],
-      },
-      {
-        title: "More",
-        links: [
-          { label: "Accessories", href: "/shop/women/accessories" },
-          { label: "New arrivals", href: "/shop/women?sort=new" },
+          { label: "Pants", href: "/shop/women/pants" },
+          { label: "Sweats", href: "/shop/women/sweats" },
+          { label: "Head gear", href: "/shop/women/head-gear" },
         ],
       },
     ],
@@ -120,6 +106,7 @@ export function SiteHeader() {
   const [openDept, setOpenDept] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const { count } = useCart();
   const headerRef = useRef<HTMLElement>(null);
 
   // Hide on scroll down, show on scroll up. The anchor resets whenever the
@@ -304,10 +291,18 @@ export function SiteHeader() {
           </Link>
           <Link
             href="/cart"
-            aria-label="Cart"
+            aria-label={count > 0 ? `Cart, ${count} items` : "Cart"}
             className="relative rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
           >
             <BagIcon />
+            {count > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-ink px-1 font-sans text-[10px] leading-none text-surface"
+              >
+                {count}
+              </span>
+            )}
           </Link>
         </div>
       </div>

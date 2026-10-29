@@ -19,7 +19,8 @@ export function Hero() {
       <div className="flex flex-col justify-end px-4 py-10 sm:px-6 lg:col-span-5 lg:px-8 lg:py-12">
         <div>
           <h1 className="hero-rise text-[length:clamp(3.25rem,6.2vw,6.25rem)] leading-[0.92] tracking-[-0.05em] text-ink">
-            Dress like you mean it.
+            <span className="block">Everything you need,</span>
+            <span className="block">Nothing you don&rsquo;t</span>
           </h1>
           <p className="hero-rise mt-8 max-w-xs font-sans text-sm leading-relaxed text-ink-muted [--d:0.12s]">
             Sophisticated clothing for men and women, made to move.

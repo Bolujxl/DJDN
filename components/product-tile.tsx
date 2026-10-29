@@ -6,6 +6,8 @@ import { formatNaira } from "@/lib/format";
 import { Settle } from "./settle";
 
 export type TileProduct = {
+  /** Where the tile links; defaults to the shop. */
+  href?: string;
   name: string;
   price: number;
   image: string;
@@ -48,7 +50,7 @@ export function ProductTile({
 }) {
   return (
     <Link
-      href="/shop"
+      href={product.href ?? "/shop"}
       className={`group block bg-surface ${
         stretch ? "lg:absolute lg:inset-0 lg:flex lg:flex-col" : ""
       }`}
