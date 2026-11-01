@@ -186,7 +186,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   </Link>{" "}
                   and{" "}
                   <Link
-                    href="/customer-care#returns"
+                    href="/returns"
                     className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
                   >
                     return policy

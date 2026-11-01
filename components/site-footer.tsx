@@ -35,10 +35,8 @@ const COLUMNS: FooterColumn[] = [
     title: "Help",
     links: [
       { label: "Customer care", href: "/customer-care" },
-      { label: "Shipping", href: "/customer-care#shipping" },
-      { label: "Orders & payment", href: "/customer-care#orders-and-payment" },
-      { label: "Return policy", href: "/customer-care#returns" },
-      { label: "FAQ", href: "/customer-care#faq" },
+      { label: "Track order", href: "/track-order" },
+      { label: "Returns", href: "/returns" },
       { label: "My account", href: "/account" },
     ],
   },
@@ -47,7 +45,6 @@ const COLUMNS: FooterColumn[] = [
     links: [
       { label: "About us", href: "/about" },
       { label: "Careers", href: "/careers" },
-      { label: "Contact us", href: "/contact" },
       { label: "Blog", href: "/blog" },
     ],
   },
