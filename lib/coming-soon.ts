@@ -19,12 +19,6 @@ export type ComingSoonPage = {
 };
 
 export const COMING_SOON = {
-  "customer-care": {
-    section: "Help",
-    title: "Customer care",
-    description:
-      "Shipping, payment and sizing answers, plus how to reach us, all in one place. We're writing them up properly.",
-  },
   "track-order": {
     section: "Help",
     title: "Track your order",

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { formatNaira } from "@/lib/format";
+import { Price } from "./country-provider";
 
 import { Settle } from "./settle";
 
@@ -93,7 +93,7 @@ export function ProductTile({
       <div className="px-4 py-4 font-sans text-sm sm:px-6 lg:px-8">
         <p className="text-ink">{product.name}</p>
         <p className="mt-1 tabular-nums text-ink-muted">
-          {formatNaira(product.price)}
+          <Price kobo={product.price} />
         </p>
       </div>
     </Link>

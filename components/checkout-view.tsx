@@ -2,12 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { formatNaira } from "@/lib/format";
+import {
+  COUNTRIES,
+  COUNTRY_CODES,
+  isCountry,
+  type CountryCode,
+} from "@/lib/currency";
 import { NIGERIAN_STATES } from "@/lib/nigeria";
+import { US_STATES } from "@/lib/us-states";
 
 import { findProduct, lineKey, useCart } from "./cart-provider";
+import { Price, useCountry } from "./country-provider";
 
 /**
  * Checkout screen: contact, delivery address, then a sticky order summary.
@@ -23,7 +30,10 @@ type Fields = {
   fullName: string;
   address: string;
   city: string;
+  /** Nigerian or US state, or UK county (optional). */
   state: string;
+  /** UK postcode or US ZIP code. Not used for Nigeria. */
+  postcode: string;
   notes: string;
 };
 
@@ -34,12 +44,28 @@ const EMPTY: Fields = {
   address: "",
   city: "",
   state: "",
+  postcode: "",
   notes: "",
+};
+
+/** What the region field is called, and whether it is a list or free text, per country. */
+const REGION: Record<CountryCode, { label: string; required: boolean }> = {
+  NG: { label: "State", required: true },
+  US: { label: "State", required: true },
+  GB: { label: "County (optional)", required: false },
+};
+
+const POSTCODE_LABEL: Partial<Record<CountryCode, string>> = {
+  GB: "Postcode",
+  US: "ZIP code",
 };
 
 type Errors = Partial<Record<keyof Fields, string>>;
 
-function validate(values: Fields): Errors {
+/** Typed details are kept for the tab's lifetime, so back or a refresh doesn't wipe the form. */
+const STORAGE_KEY = "djdn-checkout";
+
+function validate(values: Fields, country: CountryCode): Errors {
   const errors: Errors = {};
   if (!/^\S+@\S+\.\S+$/.test(values.email.trim()))
     errors.email = "Enter a valid email address.";
@@ -48,15 +74,52 @@ function validate(values: Fields): Errors {
   if (!values.fullName.trim()) errors.fullName = "Enter your full name.";
   if (!values.address.trim()) errors.address = "Enter your delivery address.";
   if (!values.city.trim()) errors.city = "Enter your city or town.";
-  if (!values.state) errors.state = "Choose your state.";
+  if (REGION[country].required && !values.state)
+    errors.state = "Choose your state.";
+  const postcode = values.postcode.trim();
+  if (country === "GB" && !/^[A-Za-z]{1,2}\d[A-Za-z\d]?\s*\d[A-Za-z]{2}$/.test(postcode))
+    errors.postcode = "Enter a valid UK postcode.";
+  if (country === "US" && !/^\d{5}(-\d{4})?$/.test(postcode))
+    errors.postcode = "Enter a 5-digit ZIP code.";
   return errors;
 }
 
 export function CheckoutView() {
   const { items } = useCart();
+  const { country, setCountry } = useCountry();
   const [values, setValues] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [restored, setRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(STORAGE_KEY);
+      const saved: unknown = raw ? JSON.parse(raw) : null;
+      if (saved && typeof saved === "object") {
+        setValues((current) => {
+          const next = { ...current };
+          for (const key of Object.keys(EMPTY) as (keyof Fields)[]) {
+            const value = (saved as Record<string, unknown>)[key];
+            if (typeof value === "string") next[key] = value;
+          }
+          return next;
+        });
+      }
+    } catch {
+      // Storage blocked or corrupt: start with an empty form.
+    }
+    setRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    } catch {
+      // Ignore: the form still works, it just won't survive a refresh.
+    }
+  }, [values, restored]);
 
   const lines = items.flatMap((item) => {
     const product = findProduct(item.slug);
@@ -82,9 +145,19 @@ export function CheckoutView() {
     };
   }
 
+  // Changing country changes the currency across the site and the shape of the
+  // address, so the region and postcode typed for the old one are cleared.
+  function onCountryChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    if (!isCountry(e.target.value)) return;
+    setCountry(e.target.value);
+    setValues((current) => ({ ...current, state: "", postcode: "" }));
+    setErrors((current) => ({ ...current, state: undefined, postcode: undefined }));
+    setSubmitted(false);
+  }
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const found = validate(values);
+    const found = validate(values, country);
     setErrors(found);
     setSubmitted(Object.keys(found).length === 0);
   }
@@ -149,7 +222,7 @@ export function CheckoutView() {
                 value={values.phone}
                 error={errors.phone}
                 onChange={set("phone")}
-                hint="For the delivery rider."
+                hint="For the delivery courier."
               />
             </div>
           </fieldset>
@@ -159,6 +232,29 @@ export function CheckoutView() {
               Delivery address
             </legend>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              {COUNTRY_CODES.length > 1 && (
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="country"
+                    className="mb-2 block font-sans text-xs text-ink-muted"
+                  >
+                    Country
+                  </label>
+                  <select
+                    id="country"
+                    autoComplete="country"
+                    value={country}
+                    onChange={onCountryChange}
+                    className={`${INPUT} text-ink`}
+                  >
+                    {COUNTRY_CODES.map((code) => (
+                      <option key={code} value={code}>
+                        {COUNTRIES[code].name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="sm:col-span-2">
                 <Field
                   id="fullName"
@@ -192,26 +288,47 @@ export function CheckoutView() {
                   htmlFor="state"
                   className="mb-2 block font-sans text-xs text-ink-muted"
                 >
-                  State
+                  {REGION[country].label}
                 </label>
-                <select
-                  id="state"
-                  autoComplete="address-level1"
-                  value={values.state}
-                  onChange={set("state")}
-                  aria-invalid={Boolean(errors.state)}
-                  aria-describedby={errors.state ? "state-error" : undefined}
-                  className={`${INPUT} ${values.state ? "text-ink" : "text-ink-muted"}`}
-                >
-                  <option value="">Choose a state</option>
-                  {NIGERIAN_STATES.map((state) => (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
+                {country === "GB" ? (
+                  <input
+                    id="state"
+                    type="text"
+                    autoComplete="address-level1"
+                    value={values.state}
+                    onChange={set("state")}
+                    className={INPUT}
+                  />
+                ) : (
+                  <select
+                    id="state"
+                    autoComplete="address-level1"
+                    value={values.state}
+                    onChange={set("state")}
+                    aria-invalid={Boolean(errors.state)}
+                    aria-describedby={errors.state ? "state-error" : undefined}
+                    className={`${INPUT} ${values.state ? "text-ink" : "text-ink-muted"}`}
+                  >
+                    <option value="">Choose a state</option>
+                    {(country === "US" ? US_STATES : NIGERIAN_STATES).map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 {errors.state && <ErrorText id="state-error" text={errors.state} />}
               </div>
+              {POSTCODE_LABEL[country] && (
+                <Field
+                  id="postcode"
+                  label={POSTCODE_LABEL[country]!}
+                  autoComplete="postal-code"
+                  value={values.postcode}
+                  error={errors.postcode}
+                  onChange={set("postcode")}
+                />
+              )}
               <div className="sm:col-span-2">
                 <label
                   htmlFor="notes"
@@ -236,9 +353,23 @@ export function CheckoutView() {
               Payment
             </legend>
             <p className="mt-6 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-              You&rsquo;ll pay securely on the next step, by card, bank transfer
-              or USSD. We never see or store your card details.
+              {country === "NG"
+                ? "You’ll pay securely on the next step, by card, bank transfer or USSD. We never see or store your card details."
+                : "You’ll pay securely by card on the next step. We never see or store your card details."}
             </p>
+            {country !== "NG" && (
+              <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
+                Orders to the {COUNTRIES[country].name} may be charged import
+                duties or taxes when they arrive. Talk to{" "}
+                <Link
+                  href="/customer-care#shipping"
+                  className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                >
+                  customer care
+                </Link>{" "}
+                before you order and we&rsquo;ll explain how it works.
+              </p>
+            )}
           </fieldset>
         </div>
 
@@ -280,7 +411,7 @@ export function CheckoutView() {
                         <p className="mt-1 text-ink-muted">Qty {item.qty}</p>
                       </div>
                       <p className="tabular-nums text-ink">
-                        {formatNaira(product.price * item.qty)}
+                        <Price kobo={product.price * item.qty} />
                       </p>
                     </div>
                   </li>
@@ -291,7 +422,7 @@ export function CheckoutView() {
             <dl className="space-y-3 py-6 font-sans text-sm">
               <div className="flex items-baseline justify-between">
                 <dt className="text-ink-muted">Subtotal</dt>
-                <dd className="tabular-nums text-ink">{formatNaira(subtotal)}</dd>
+                <dd className="tabular-nums text-ink"><Price kobo={subtotal} /></dd>
               </div>
               <div className="flex items-baseline justify-between gap-6">
                 <dt className="text-ink-muted">Delivery</dt>
@@ -303,8 +434,11 @@ export function CheckoutView() {
 
             <div className="flex items-baseline justify-between border-t border-outline pt-6 font-sans text-sm">
               <p className="text-ink">Total</p>
-              <p className="tabular-nums text-ink">{formatNaira(subtotal)}</p>
+              <p className="tabular-nums text-ink"><Price kobo={subtotal} /></p>
             </div>
+            <p className="mt-3 font-sans text-xs text-ink-muted">
+              All prices are in {COUNTRIES[country].currencyName}.
+            </p>
 
             <button
               type="submit"
@@ -331,7 +465,7 @@ export function CheckoutView() {
 }
 
 const INPUT =
-  "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-sm text-ink placeholder:text-ink-muted transition-colors focus:border-primary aria-[invalid=true]:border-error";
+  "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-base text-ink placeholder:text-ink-muted transition-colors focus:border-primary aria-[invalid=true]:border-error";
 
 function ErrorText({ id, text }: { id: string; text: string }) {
   return (

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import type { Colourway, Product } from "@/lib/catalogue";
-import { formatNaira } from "@/lib/format";
+import { Price } from "./country-provider";
 
 import { Settle } from "./settle";
 
@@ -83,7 +83,7 @@ export function ShopTile({
             <span className="text-ink-muted">{colourway.name}</span>
           </p>
           <p className="mt-1 tabular-nums text-ink-muted">
-            {formatNaira(product.price)}
+            <Price kobo={product.price} />
           </p>
         </div>
       </Link>
@@ -98,7 +98,7 @@ export function ShopTile({
             onMouseEnter={() => setActive(index)}
             onFocus={() => setActive(index)}
             onClick={() => setActive(index)}
-            className="flex h-9 w-9 items-center justify-center"
+            className="flex h-11 w-11 items-center justify-center"
           >
             <span
               style={{ backgroundColor: c.swatch }}

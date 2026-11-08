@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { SITE, WHATSAPP_URL } from "@/lib/site";
+
+import { CountrySelect } from "./country-select";
 import { NewsletterForm } from "./newsletter-form";
 
 /**
@@ -51,10 +54,9 @@ const COLUMNS: FooterColumn[] = [
   {
     title: "Follow",
     links: [
-      { label: "Instagram", href: "https://instagram.com/djdn.ng" },
-      { label: "TikTok", href: "https://www.tiktok.com/@djdn.ng" },
-      { label: "X", href: "#" },
-      { label: "WhatsApp", href: "#" },
+      { label: "Instagram", href: SITE.instagram },
+      { label: "TikTok", href: SITE.tiktok },
+      { label: "WhatsApp", href: WHATSAPP_URL },
     ],
   },
 ];
@@ -153,13 +155,16 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
-          <Image
-            src="/brand/logo/djdn-logo-white.png"
-            alt="DJDN"
-            width={1080}
-            height={478}
-            className="h-6 w-auto"
-          />
+          <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
+            <CountrySelect />
+            <Image
+              src="/brand/logo/djdn-logo-white.png"
+              alt="DJDN"
+              width={1080}
+              height={478}
+              className="h-6 w-auto"
+            />
+          </div>
         </div>
       </div>
     </footer>

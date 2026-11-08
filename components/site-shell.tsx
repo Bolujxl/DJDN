@@ -1,4 +1,5 @@
 import { CartProvider } from "./cart-provider";
+import { CountryProvider } from "./country-provider";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 
@@ -8,6 +9,7 @@ import { SiteHeader } from "./site-header";
  */
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
+    <CountryProvider>
     <CartProvider>
       <a
         href="#main"
@@ -21,5 +23,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       </main>
       <SiteFooter />
     </CartProvider>
+    </CountryProvider>
   );
 }

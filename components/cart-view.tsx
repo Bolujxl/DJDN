@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { formatNaira } from "@/lib/format";
+import { Price } from "./country-provider";
 
 import { findProduct, lineKey, useCart } from "./cart-provider";
 
@@ -83,7 +83,7 @@ export function CartView() {
                         </p>
                       </div>
                       <p className="tabular-nums text-ink">
-                        {formatNaira(product.price * item.qty)}
+                        <Price kobo={product.price * item.qty} />
                       </p>
                     </div>
 
@@ -93,7 +93,7 @@ export function CartView() {
                           type="button"
                           aria-label={`Fewer ${product.name}`}
                           onClick={() => setQty(key, item.qty - 1)}
-                          className="h-10 w-10 text-ink transition-colors hover:bg-background"
+                          className="h-11 w-11 text-ink transition-colors hover:bg-background"
                         >
                           -
                         </button>
@@ -104,7 +104,7 @@ export function CartView() {
                           type="button"
                           aria-label={`More ${product.name}`}
                           onClick={() => setQty(key, item.qty + 1)}
-                          className="h-10 w-10 text-ink transition-colors hover:bg-background"
+                          className="h-11 w-11 text-ink transition-colors hover:bg-background"
                         >
                           +
                         </button>
@@ -126,7 +126,7 @@ export function CartView() {
           <aside className="font-sans text-sm lg:col-span-4">
             <div className="flex items-baseline justify-between border-t border-outline pt-6">
               <p className="text-ink">Subtotal</p>
-              <p className="tabular-nums text-ink">{formatNaira(subtotal)}</p>
+              <p className="tabular-nums text-ink"><Price kobo={subtotal} /></p>
             </div>
             <button
               type="button"

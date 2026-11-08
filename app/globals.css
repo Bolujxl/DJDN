@@ -32,9 +32,9 @@
     "Helvetica Neue", Arial, sans-serif;
 
   /* Editorial headline scale — big and tight */
-  --text-display: clamp(3rem, 9vw, 7.5rem);
-  --text-display--line-height: 0.95;
-  --text-display--letter-spacing: -0.045em;
+  --text-display: clamp(3.25rem, 6.2vw, 6.25rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.05em;
 
   --tracking-tight: -0.011em;
 }

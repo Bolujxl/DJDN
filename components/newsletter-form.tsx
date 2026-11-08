@@ -25,14 +25,17 @@ export function NewsletterForm({
   className?: string;
 } = {}) {
   const light = tone === "light";
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "done" | "error" | "invalid"
+  >("idle");
   const [email, setEmail] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setStatus("invalid");
+      return;
+    }
     setStatus("loading");
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // placeholder round trip
@@ -56,7 +59,7 @@ export function NewsletterForm({
     <form
       onSubmit={handleSubmit}
       noValidate
-      className={`flex max-w-md flex-col gap-3 sm:flex-row ${className}`}
+      className={`flex max-w-md flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}
     >
       <label htmlFor={id} className="sr-only">
         Email address
@@ -68,7 +71,9 @@ export function NewsletterForm({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className={`w-full rounded-[18px] border px-5 py-3 font-sans text-sm transition-colors ${
+        aria-invalid={status === "invalid"}
+        aria-describedby={status === "invalid" ? `${id}-error` : undefined}
+        className={`w-full rounded-[18px] border px-5 py-3 font-sans text-base transition-colors sm:flex-1 ${
           light
             ? "border-outline bg-surface text-ink placeholder:text-ink-muted focus:border-primary"
             : "border-white/20 bg-white/5 text-on-secondary placeholder:text-on-secondary-muted focus:border-white/40"
@@ -85,9 +90,17 @@ export function NewsletterForm({
       >
         {status === "loading" ? "Sending…" : buttonLabel}
       </button>
-      {status === "error" && (
-        <p className="font-sans text-xs text-error sm:absolute" role="alert">
-          Something went wrong. Try again.
+      {(status === "error" || status === "invalid") && (
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className={`font-sans text-xs sm:basis-full ${
+            light ? "text-error" : "text-on-secondary"
+          }`}
+        >
+          {status === "invalid"
+            ? "Enter a valid email address."
+            : "Something went wrong. Try again."}
         </p>
       )}
     </form>

@@ -35,6 +35,12 @@ export const metadata: Metadata = {
   },
   description:
     "DJDN makes sophisticated, everyday clothing for men and women — quietly made, honestly priced.",
+  openGraph: {
+    type: "website",
+    siteName: "DJDN",
+    locale: "en_NG",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

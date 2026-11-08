@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useCart } from "./cart-provider";
@@ -65,6 +66,14 @@ const NAV: NavItem[] = [
   { label: "Blog", href: "/blog" },
 ];
 
+/** Desktop nav item: the section you're in is full ink and underlined. */
+const navLinkClass = (active: boolean) =>
+  `whitespace-nowrap font-sans text-sm transition-colors hover:text-primary ${
+    active
+      ? "text-ink underline decoration-1 underline-offset-[10px]"
+      : "text-ink/80"
+  }`;
+
 /** Org-chart rendering of a branch: groups side by side, leaves on connector lines. */
 function NavTree({
   item,
@@ -107,6 +116,9 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { count } = useCart();
+  const pathname = usePathname();
+  const isActive = (href?: string) =>
+    Boolean(href) && (pathname === href || pathname.startsWith(`${href}/`));
   const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -269,7 +281,8 @@ export function SiteHeader() {
                     onClick={() =>
                       setOpenDept((v) => (v === item.label ? null : item.label))
                     }
-                    className="whitespace-nowrap font-sans text-sm text-ink/80 transition-colors hover:text-primary"
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    className={navLinkClass(isActive(item.href))}
                   >
                     {item.label}
                   </button>
@@ -301,7 +314,8 @@ export function SiteHeader() {
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="whitespace-nowrap font-sans text-sm text-ink/80 transition-colors hover:text-primary"
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    className={navLinkClass(isActive(item.href))}
                   >
                     {item.label}
                   </Link>
@@ -313,13 +327,13 @@ export function SiteHeader() {
 
         {/* Utility icons */}
         <div className="flex items-center gap-1 lg:flex-1 lg:justify-end">
-          <button
-            type="button"
+          <Link
+            href="/search"
             aria-label="Search"
             className="rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
           >
             <SearchIcon />
-          </button>
+          </Link>
           <Link
             href="/account"
             aria-label="Account"
@@ -336,7 +350,7 @@ export function SiteHeader() {
             {count > 0 && (
               <span
                 aria-hidden="true"
-                className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-ink px-1 font-sans text-[10px] leading-none text-surface"
+                className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1 font-sans text-xs leading-none text-surface"
               >
                 {count}
               </span>

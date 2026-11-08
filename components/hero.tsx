@@ -18,7 +18,7 @@ export function Hero() {
     <section className="grid min-h-[calc(100svh-5rem)] grid-cols-1 bg-background text-ink lg:grid-cols-12">
       <div className="flex flex-col justify-end px-4 py-10 sm:px-6 lg:col-span-5 lg:px-8 lg:py-12">
         <div>
-          <h1 className="hero-rise text-[length:clamp(3.25rem,6.2vw,6.25rem)] leading-[0.92] tracking-[-0.05em] text-ink">
+          <h1 className="hero-rise text-display text-ink">
             <span className="block">Everything you need,</span>
             <span className="block">Nothing you don&rsquo;t</span>
           </h1>

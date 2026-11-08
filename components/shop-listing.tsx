@@ -2,13 +2,43 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CATEGORY_LABELS, type Category, type Product } from "@/lib/catalogue";
 
+import type { CountryCode } from "@/lib/currency";
+
+import { useCountry } from "./country-provider";
 import { ShopTile, type ShopView } from "./shop-tile";
 
 type Sort = "featured" | "price-asc" | "price-desc";
+
+/** Price bands in kobo; `min` is inclusive, `max` exclusive. */
+type PriceBand = { id: string; label: string; min?: number; max?: number };
+
+const PRICE_BANDS: PriceBand[] = [
+  { id: "under-30", label: "Under ₦30k", max: 3000000 },
+  { id: "30-40", label: "₦30–40k", min: 3000000, max: 4000000 },
+  { id: "over-40", label: "Over ₦40k", min: 4000000 },
+];
+
+function inBand(price: number, band: PriceBand) {
+  return (
+    (band.min === undefined || price >= band.min) &&
+    (band.max === undefined || price < band.max)
+  );
+}
+
+/**
+ * Band label in the shopper's currency. Naira keeps the short "₦30k" style;
+ * pounds and dollars are worked out from the band's edges.
+ */
+function bandLabel(band: PriceBand, country: CountryCode, format: (kobo: number) => string) {
+  if (country === "NG") return band.label;
+  if (band.min === undefined) return `Under ${format(band.max!)}`;
+  if (band.max === undefined) return `Over ${format(band.min)}`;
+  return `${format(band.min)} to ${format(band.max)}`;
+}
 
 const SORTS: { value: Sort; label: string }[] = [
   { value: "featured", label: "Featured" },
@@ -35,21 +65,69 @@ export function ShopListing({
   const [view, setView] = useState<ShopView>("look");
   const [sort, setSort] = useState<Sort>("featured");
   const [category, setCategory] = useState<Category | "all">("all");
+  const [price, setPrice] = useState<PriceBand["id"] | "any">("any");
+  const [ready, setReady] = useState(false);
+  const { country, format } = useCountry();
 
   const categories = useMemo(
     () => Array.from(new Set(products.map((p) => p.category))),
     [products],
   );
 
+  // Only offer price bands that have something in them, and only when there is
+  // more than one to choose between.
+  const bands = useMemo(() => {
+    const populated = PRICE_BANDS.filter((band) =>
+      products.some((p) => inBand(p.price, band)),
+    );
+    return populated.length > 1 ? populated : [];
+  }, [products]);
+
+  // The filter choices live in the URL (?order=, ?type=, ?price=, ?view=) so the
+  // back button from a product brings the shopper back to the same list, and a
+  // filtered view can be shared. The server renders the defaults; this applies
+  // whatever the URL carries once the page is up.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const order = params.get("order");
+    const type = params.get("type");
+    const band = params.get("price");
+    const photo = params.get("view");
+    if (SORTS.some((s) => s.value === order)) setSort(order as Sort);
+    if (categories.some((c) => c === type)) setCategory(type as Category);
+    if (PRICE_BANDS.some((b) => b.id === band)) setPrice(band as PriceBand["id"]);
+    if (photo === "product") setView("product");
+    setReady(true);
+  }, [categories]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const params = new URLSearchParams(window.location.search);
+    const set = (key: string, value: string, fallback: string) =>
+      value === fallback ? params.delete(key) : params.set(key, value);
+    set("order", sort, "featured");
+    set("type", category, "all");
+    set("price", price, "any");
+    set("view", view, "look");
+    const query = params.toString();
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+  }, [ready, sort, category, price, view]);
+
   const visible = useMemo(() => {
-    const filtered =
-      category === "all"
-        ? products
-        : products.filter((p) => p.category === category);
+    const band = PRICE_BANDS.find((b) => b.id === price);
+    const filtered = products.filter(
+      (p) =>
+        (category === "all" || p.category === category) &&
+        (!band || inBand(p.price, band)),
+    );
     if (sort === "price-asc") return [...filtered].sort((a, b) => a.price - b.price);
     if (sort === "price-desc") return [...filtered].sort((a, b) => b.price - a.price);
     return filtered;
-  }, [products, category, sort]);
+  }, [products, category, price, sort]);
 
   // Complete the last desktop row (4 across) with light cards that deepen to
   // a soft ink fade at the bottom and carry a faint logo, so a sparse result
@@ -114,6 +192,30 @@ export function ShopListing({
               ))}
             </div>
           )}
+
+          {bands.length > 0 && (
+            <div role="group" aria-label="Price" className="flex gap-4">
+              <button
+                type="button"
+                aria-pressed={price === "any"}
+                onClick={() => setPrice("any")}
+                className={chip(price === "any")}
+              >
+                Any price
+              </button>
+              {bands.map((band) => (
+                <button
+                  key={band.id}
+                  type="button"
+                  aria-pressed={price === band.id}
+                  onClick={() => setPrice(band.id)}
+                  className={chip(price === band.id)}
+                >
+                  {bandLabel(band, country, format)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <label className="flex items-center gap-2 font-sans text-sm text-ink-muted">
@@ -121,7 +223,7 @@ export function ShopListing({
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as Sort)}
-            className="bg-transparent py-1 text-ink"
+            className="bg-transparent py-1 text-base text-ink sm:text-sm"
           >
             {SORTS.map((option) => (
               <option key={option.value} value={option.value}>

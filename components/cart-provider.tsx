@@ -8,11 +8,12 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
 import { CATALOGUE, type Product } from "@/lib/catalogue";
-import { formatNaira } from "@/lib/format";
+import { Price } from "./country-provider";
 
 export type CartItem = {
   slug: string;
@@ -104,6 +105,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [lastAdded, setLastAdded] = useState<CartItem | null>(null);
+  const [removed, setRemoved] = useState<{
+    item: CartItem;
+    index: number;
+  } | null>(null);
 
   useEffect(() => {
     try {
@@ -171,9 +176,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  // Removing a line keeps it for a few seconds so a mistap can be undone.
+  const itemsRef = useRef(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
   const remove = useCallback((key: string) => {
+    const index = itemsRef.current.findIndex((line) => lineKey(line) === key);
+    if (index < 0) return;
+    setRemoved({ item: itemsRef.current[index], index });
     setItems((current) => current.filter((line) => lineKey(line) !== key));
   }, []);
+
+  const undoRemove = useCallback(() => {
+    if (!removed) return;
+    const { item, index } = removed;
+    setItems((current) => {
+      if (current.some((line) => lineKey(line) === lineKey(item))) return current;
+      const next = [...current];
+      next.splice(Math.min(index, next.length), 0, item);
+      return next;
+    });
+    setRemoved(null);
+  }, [removed]);
+
+  useEffect(() => {
+    if (!removed) return;
+    const timer = window.setTimeout(() => setRemoved(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [removed]);
 
   const value = useMemo<CartContextValue>(
     () => ({
@@ -191,6 +223,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       {children}
       {lastAdded && (
         <AddedPopup item={lastAdded} onClose={() => setLastAdded(null)} />
+      )}
+      {removed && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="popup-in fixed bottom-6 left-4 right-4 z-[60] flex items-center justify-between gap-6 border border-outline bg-surface px-5 py-4 font-sans text-sm shadow-[0_16px_32px_-12px_rgba(28,25,23,0.18)] sm:left-6 sm:right-auto sm:min-w-80 lg:left-8"
+        >
+          <p className="text-ink">
+            Removed {findProduct(removed.item.slug)?.name ?? "item"}
+          </p>
+          <button
+            type="button"
+            onClick={undoRemove}
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+          >
+            Undo
+          </button>
+        </div>
       )}
     </CartContext.Provider>
   );
@@ -246,7 +296,7 @@ function AddedPopup({ item, onClose }: { item: CartItem; onClose: () => void }) 
             {item.colour}, size {item.size}
           </p>
           <p className="mt-1 tabular-nums text-ink-muted">
-            {formatNaira(product.price)}
+            <Price kobo={product.price} />
           </p>
         </div>
       </div>

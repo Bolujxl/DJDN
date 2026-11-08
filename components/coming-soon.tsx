@@ -6,6 +6,8 @@ import {
   type ComingSoonPage,
 } from "@/lib/coming-soon";
 
+import { SITE } from "@/lib/site";
+
 import { BouncingLogos } from "./bouncing-logos";
 import { NewsletterForm } from "./newsletter-form";
 
@@ -93,12 +95,12 @@ export function ComingSoon({ page: key }: { page: ComingSoonKey }) {
           </li>
           <li>
             <a
-              href="https://instagram.com/djdn.ng"
+              href={SITE.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
             >
-              @djdn.ng on Instagram
+              {SITE.instagramHandle} on Instagram
             </a>
           </li>
         </ul>

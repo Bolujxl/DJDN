@@ -271,3 +271,8 @@ export function tileFor(
     hoverFit: productFirst ? "cover" : "contain",
   };
 }
+
+/** Safe lookup for places that hold a slug from outside (orders, the cart). */
+export function getProduct(slug: string): Product | undefined {
+  return CATALOGUE.find((p) => p.slug === slug);
+}
