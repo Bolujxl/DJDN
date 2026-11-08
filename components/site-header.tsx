@@ -108,6 +108,8 @@ export function SiteHeader() {
   const [hidden, setHidden] = useState(false);
   const { count } = useCart();
   const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Hide on scroll down, show on scroll up. The anchor resets whenever the
   // direction flips, so slow scrolling still triggers (per-event deltas can be
@@ -168,6 +170,41 @@ export function SiteHeader() {
     };
   }, []);
 
+  // Mobile menu focus: move into it on open, keep Tab cycling between the
+  // menu button and the menu links (the page behind is out of reach), and put
+  // focus back on the button when it closes.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const overlay = overlayRef.current;
+    const trigger = menuButtonRef.current;
+    overlay?.querySelector<HTMLElement>("a[href], button")?.focus();
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab" || !overlay) return;
+      const stops = [
+        trigger,
+        ...overlay.querySelectorAll<HTMLElement>("a[href], button"),
+      ].filter((el): el is HTMLElement => el !== null);
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      const active = document.activeElement;
+      if (active === document.body || overlay?.contains(active)) {
+        trigger?.focus();
+      }
+    };
+  }, [mobileOpen]);
+
   // Lock body scroll while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -188,6 +225,7 @@ export function SiteHeader() {
       <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Mobile menu trigger */}
         <button
+          ref={menuButtonRef}
           type="button"
           className="-ml-2 rounded-full p-3 transition-colors hover:bg-secondary/8 lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -303,6 +341,10 @@ export function SiteHeader() {
                 {count}
               </span>
             )}
+            {/* Link names aren't announced when they change; this is. */}
+            <span role="status" className="sr-only">
+              {count > 0 ? `${count} items in cart` : ""}
+            </span>
           </Link>
         </div>
       </div>
@@ -312,8 +354,11 @@ export function SiteHeader() {
           a transformed ancestor becomes the containing block for `fixed`
           children, which would break this overlay while the header slides. */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-background lg:hidden">
-          <nav aria-label="Primary" className="px-4 py-6 sm:px-6">
+        <div
+          ref={overlayRef}
+          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-background lg:hidden"
+        >
+          <nav aria-label="Mobile" className="px-4 py-6 sm:px-6">
             <ul className="divide-y divide-outline">
               {NAV.map((item) =>
                 item.groups ? (

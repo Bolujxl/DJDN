@@ -331,7 +331,7 @@ export function CheckoutView() {
 }
 
 const INPUT =
-  "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-sm text-ink placeholder:text-ink-muted transition-colors focus:border-ink/40 focus:outline-none aria-[invalid=true]:border-error";
+  "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-sm text-ink placeholder:text-ink-muted transition-colors focus:border-primary aria-[invalid=true]:border-error";
 
 function ErrorText({ id, text }: { id: string; text: string }) {
   return (

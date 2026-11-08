@@ -41,6 +41,53 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 const STORAGE_KEY = "djdn-cart";
 
+/** Largest quantity of one line. Keeps a held "+" or a bad stored value from producing absurd totals. */
+const MAX_QTY = 99;
+
+function clampQty(qty: number) {
+  return Math.min(Math.max(Math.trunc(qty) || 0, 0), MAX_QTY);
+}
+
+/**
+ * Turns whatever is in storage into a clean cart. localStorage can hold
+ * anything (an old format, a hand edit), and the provider wraps every page,
+ * so a wrong shape here must never reach state. Anything that isn't a line for
+ * a product we sell is dropped.
+ */
+function parseStoredCart(raw: string): CartItem[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  const lines = new Map<string, CartItem>();
+  for (const entry of parsed) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const { slug, colour, size, qty } = entry as Record<string, unknown>;
+    if (
+      typeof slug !== "string" ||
+      typeof colour !== "string" ||
+      typeof size !== "string" ||
+      !findProduct(slug)
+    ) {
+      continue;
+    }
+    const item = { slug, colour, size, qty: clampQty(Number(qty)) || 1 };
+    const key = lineKey(item);
+    const existing = lines.get(key);
+    lines.set(
+      key,
+      existing
+        ? { ...existing, qty: clampQty(existing.qty + item.qty) }
+        : item,
+    );
+  }
+  return [...lines.values()];
+}
+
 export function useCart() {
   const value = useContext(CartContext);
   if (!value) throw new Error("useCart must be used inside <CartProvider>");
@@ -61,11 +108,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) setItems(JSON.parse(stored) as CartItem[]);
+      if (stored) setItems(parseStoredCart(stored));
     } catch {
-      // Storage can be blocked or corrupt; start with an empty cart.
+      // Storage can be blocked; start with an empty cart.
     }
     setLoaded(true);
+  }, []);
+
+  // Keep other open tabs in step: adding in one and checking out in another
+  // would otherwise leave the second with a stale cart that overwrites the first.
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key !== STORAGE_KEY) return;
+      setItems(e.newValue ? parseStoredCart(e.newValue) : []);
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
@@ -92,7 +150,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const existing = current.find((line) => lineKey(line) === key);
       if (existing) {
         return current.map((line) =>
-          lineKey(line) === key ? { ...line, qty: line.qty + 1 } : line,
+          lineKey(line) === key
+            ? { ...line, qty: clampQty(line.qty + 1) }
+            : line,
         );
       }
       return [...current, { ...item, qty: 1 }];
@@ -101,10 +161,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setQty = useCallback((key: string, qty: number) => {
+    const next = clampQty(qty);
     setItems((current) =>
-      qty <= 0
+      next <= 0
         ? current.filter((line) => lineKey(line) !== key)
-        : current.map((line) => (lineKey(line) === key ? { ...line, qty } : line)),
+        : current.map((line) =>
+            lineKey(line) === key ? { ...line, qty: next } : line,
+          ),
     );
   }, []);
 

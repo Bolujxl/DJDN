@@ -9,6 +9,7 @@ import {
   PAYMENT_LABELS,
   type OrderSummary,
 } from "@/lib/orders";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,6 +45,21 @@ export default async function AccountPage({
         <SignInPanel failed={error === "sign-in"} />
       </section>
     );
+  }
+
+  // Orders placed as a guest carry only an email. Once the customer is signed
+  // in with that same, verified email, attach those orders to the account so
+  // they show up below. Needs the service-role key; skipped without it.
+  if (user.email && user.email_confirmed_at) {
+    try {
+      await createAdminClient()
+        ?.from("orders")
+        .update({ user_id: user.id })
+        .is("user_id", null)
+        .eq("email", user.email.toLowerCase());
+    } catch {
+      // Not fatal: the account page still works, guest orders just stay unlinked.
+    }
   }
 
   // RLS limits this to the signed-in customer's own orders. If the schema

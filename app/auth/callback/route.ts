@@ -10,12 +10,17 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const requested = searchParams.get("next") ?? "/account";
-  // Only follow same-site paths, never an absolute URL or "//host".
-  const next =
-    requested.startsWith("/") && !requested.startsWith("//")
-      ? requested
-      : "/account";
+
+  // Resolve `next` against our own origin and keep it only if it still lands
+  // here. Browsers treat "\" like "/", so string checks on the first
+  // character aren't enough to rule out "/\evil.com".
+  let next = "/account";
+  try {
+    const target = new URL(searchParams.get("next") ?? "/account", origin);
+    if (target.origin === origin) next = target.pathname + target.search;
+  } catch {
+    // Unparseable: keep the default.
+  }
 
   if (isSupabaseConfigured && code) {
     const supabase = await createClient();

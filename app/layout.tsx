@@ -26,7 +26,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://djdn.com"),
+  // Set NEXT_PUBLIC_SITE_URL on preview or staging deploys so canonical and
+  // share URLs don't point at production.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://djdn.com"),
   title: {
     default: "DJDN — Considered everyday wear",
     template: "%s · DJDN",

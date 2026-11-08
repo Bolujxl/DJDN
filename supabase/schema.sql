@@ -23,7 +23,7 @@ create table orders (
   number text not null unique
     default ('DJDN-' || nextval('order_number_seq')),
   user_id uuid references auth.users (id) on delete set null,
-  email text not null,
+  email text not null check (email = lower(email)),  -- always stored lowercase
   customer_name text not null,
   phone text,
   shipping_address jsonb not null,

@@ -121,7 +121,7 @@ export function ShopListing({
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as Sort)}
-            className="bg-transparent py-1 text-ink focus:outline-none"
+            className="bg-transparent py-1 text-ink"
           >
             {SORTS.map((option) => (
               <option key={option.value} value={option.value}>

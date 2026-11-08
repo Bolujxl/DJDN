@@ -684,3 +684,23 @@ One line each; only real deviations flagged.
 - [ ] `images.remotePatterns` whitelists `cdn.sanity.io` before Sanity images go live.
 - [ ] Order/account schema is applied (`supabase/schema.sql`) and RLS verified against a second test account (no cross-account reads).
 - [ ] Skip link, focus management, and error/not-found/loading pages exist before launch.
+
+---
+
+## Fix status
+
+Fixed in code, not yet re-audited:
+
+- Area 1: `metadataBase` reads `NEXT_PUBLIC_SITE_URL`.
+- Area 3: stored cart is validated (array check, per-field checks, unknown products dropped, duplicates merged); quantity capped at 99; other tabs stay in sync via the `storage` event.
+- Area 4: auth callback resolves `next` with `new URL()` and keeps it only if same-origin; sign-out refuses a cross-site `Origin`; guest orders attach to the account on sign-in (needs `SUPABASE_SERVICE_ROLE_KEY`; orders must store lowercase email, enforced in `schema.sql`).
+- Area 7: baseline security headers added; `images.remotePatterns` allows `cdn.sanity.io`; branded `not-found` (root and storefront) and `error` pages added.
+- Area 8: skip link and `id="main"`; form fields keep the visible focus ring; mobile menu moves, traps and restores focus; cart count is announced; the mobile nav landmark is labelled "Mobile".
+
+Still open, and why:
+
+- Area 2 (payment), Area 5 (newsletter/contact/checkout backends), Area 6 (reading products from Sanity): not built yet.
+- Content-Security-Policy: waits on the payment provider's domains.
+- Footer X and WhatsApp links: need the real URLs.
+- Cream header vs the brief's green header, and orange as small text: design decisions, not defects today.
+- Desktop mega-menu focus handling and `loading.tsx`: low value until data is fetched.

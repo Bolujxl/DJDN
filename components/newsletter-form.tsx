@@ -68,9 +68,9 @@ export function NewsletterForm({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className={`w-full rounded-[18px] border px-5 py-3 font-sans text-sm transition-colors focus:outline-none ${
+        className={`w-full rounded-[18px] border px-5 py-3 font-sans text-sm transition-colors ${
           light
-            ? "border-outline bg-surface text-ink placeholder:text-ink-muted focus:border-ink/40"
+            ? "border-outline bg-surface text-ink placeholder:text-ink-muted focus:border-primary"
             : "border-white/20 bg-white/5 text-on-secondary placeholder:text-on-secondary-muted focus:border-white/40"
         }`}
       />

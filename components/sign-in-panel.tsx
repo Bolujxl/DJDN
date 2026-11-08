@@ -75,7 +75,7 @@ export function SignInPanel({ failed = false }: { failed?: boolean }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-sm text-ink placeholder:text-ink-muted transition-colors focus:border-ink/40 focus:outline-none"
+            className="w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-sm text-ink placeholder:text-ink-muted transition-colors focus:border-primary"
           />
           <button
             type="submit"
