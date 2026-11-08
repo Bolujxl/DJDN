@@ -27,7 +27,7 @@ create table orders (
   customer_name text not null,
   phone text,
   shipping_address jsonb not null,
-  subtotal integer not null,        -- naira
+  subtotal integer not null,        -- kobo (same as the catalogue prices)
   shipping_fee integer not null default 0,
   total integer not null,
   currency text not null default 'NGN',
@@ -47,7 +47,7 @@ create table order_items (
   name text not null,
   colour text not null,
   size text not null,
-  unit_price integer not null,      -- naira, as charged
+  unit_price integer not null,      -- kobo, as charged
   qty integer not null check (qty > 0)
 );
 
