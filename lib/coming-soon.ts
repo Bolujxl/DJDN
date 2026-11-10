@@ -37,12 +37,6 @@ export const COMING_SOON = {
     description:
       "Order history, saved details and quicker checkout are on their way. Your cart works in the meantime.",
   },
-  about: {
-    section: "Company",
-    title: "About us",
-    description:
-      "The story behind DJDN, told properly. It's coming soon.",
-  },
   careers: {
     section: "Company",
     title: "Careers",
