@@ -66,13 +66,21 @@ const NAV: NavItem[] = [
   { label: "Blog", href: "/blog" },
 ];
 
-/** Desktop nav item: the section you're in is full ink and underlined. */
+/**
+ * Desktop nav item. The colour eases over 300ms and a hairline underline draws
+ * in from the left on hover; the section you're in is full ink with the line
+ * already drawn.
+ */
 const navLinkClass = (active: boolean) =>
-  `whitespace-nowrap font-sans text-sm transition-colors hover:text-primary ${
+  `relative whitespace-nowrap font-sans text-sm transition-colors duration-300 ease-out hover:text-primary after:absolute after:inset-x-0 after:-bottom-2 after:h-px after:origin-left after:bg-current after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:after:transition-none ${
     active
-      ? "text-ink underline decoration-1 underline-offset-[10px]"
-      : "text-ink/80"
+      ? "text-ink after:scale-x-100"
+      : "text-ink/80 after:scale-x-0 hover:after:scale-x-100"
   }`;
+
+/** Icon buttons in the header: a soft circle fades in behind the icon. */
+const ICON_BUTTON =
+  "rounded-full p-3 text-ink transition-colors duration-300 ease-out hover:bg-secondary/8 motion-reduce:transition-none";
 
 /** Org-chart rendering of a branch: groups side by side, leaves on connector lines. */
 function NavTree({
@@ -98,7 +106,7 @@ function NavTree({
                 <Link
                   href={link.href}
                   onClick={onNavigate}
-                  className="block py-1.5 font-sans text-sm text-ink transition-colors hover:text-primary"
+                  className="block py-1.5 font-sans text-sm text-ink transition-[color,translate] duration-300 ease-out hover:translate-x-0.5 hover:text-primary motion-reduce:transition-none"
                 >
                   {link.label}
                 </Link>
@@ -120,6 +128,19 @@ export function SiteHeader() {
   const isActive = (href?: string) =>
     Boolean(href) && (pathname === href || pathname.startsWith(`${href}/`));
   const headerRef = useRef<HTMLElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Hover intent for the mega-menu: it opens at once but closes after a short
+  // pause, so a cursor that clips the edge on its way to a link doesn't make
+  // the menu flicker shut.
+  function openMenu(label: string) {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenDept(label);
+  }
+  function closeMenuSoon() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenDept(null), 140);
+  }
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -250,7 +271,7 @@ export function SiteHeader() {
         {/* Logo mark */}
         <Link
           href="/"
-          className="transition-opacity hover:opacity-75 lg:flex-1"
+          className="transition-opacity duration-300 ease-out hover:opacity-70 motion-reduce:transition-none lg:flex-1"
           onClick={() => setOpenDept(null)}
         >
           <Image
@@ -271,8 +292,8 @@ export function SiteHeader() {
                 <li
                   key={item.label}
                   className="relative"
-                  onMouseEnter={() => setOpenDept(item.label)}
-                  onMouseLeave={() => setOpenDept(null)}
+                  onMouseEnter={() => openMenu(item.label)}
+                  onMouseLeave={closeMenuSoon}
                 >
                   <button
                     type="button"
@@ -289,7 +310,7 @@ export function SiteHeader() {
 
                   {openDept === item.label && (
                     <div className="absolute left-1/2 top-full w-max -translate-x-1/2 pt-4">
-                      <div className="min-w-[14rem] rounded-lg border border-outline bg-surface p-6 text-ink shadow-[0_16px_32px_-12px_rgba(28,25,23,0.14)]">
+                      <div className="popup-in min-w-[14rem] rounded-lg border border-outline bg-surface p-6 text-ink shadow-[0_16px_32px_-12px_rgba(28,25,23,0.14)]">
                         <p className="mb-3 font-sans text-sm font-medium text-ink">
                           {item.label}
                         </p>
@@ -330,23 +351,23 @@ export function SiteHeader() {
           <Link
             href="/search"
             aria-label="Search"
-            className="rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
+            className={ICON_BUTTON}
           >
             <SearchIcon />
           </Link>
           <Link
             href="/account"
             aria-label="Account"
-            className="rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
+            className={ICON_BUTTON}
           >
             <AccountIcon />
           </Link>
           <Link
             href="/cart"
             aria-label={count > 0 ? `Cart, ${count} items` : "Cart"}
-            className="relative rounded-full p-3 text-ink transition-colors hover:bg-secondary/8"
+            className={`relative ${ICON_BUTTON}`}
           >
-            <BagIcon />
+            <CartIcon />
             {count > 0 && (
               <span
                 aria-hidden="true"
@@ -394,12 +415,35 @@ export function SiteHeader() {
                 ),
               )}
             </ul>
+
+            {/* Help sits in the footer on desktop, several screens down on a
+                phone, so the common ones are repeated here. */}
+            <p className="mt-8 font-sans text-xs text-ink-muted">Help</p>
+            <ul className="mt-2">
+              {MOBILE_HELP.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
       )}
     </>
   );
 }
+
+const MOBILE_HELP = [
+  { label: "Customer care", href: "/customer-care" },
+  { label: "Track order", href: "/track-order" },
+  { label: "Returns", href: "/returns" },
+];
 
 function MobileBranch({
   item,
@@ -484,11 +528,13 @@ function AccountIcon() {
   );
 }
 
-function BagIcon() {
+/** A cart, to match the "Cart" wording used everywhere else on the site. */
+function CartIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M7 8V6.5a5 5 0 0 1 10 0V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M5.5 8h13l.9 12a1.5 1.5 0 0 1-1.5 1.6H6.1A1.5 1.5 0 0 1 4.6 20L5.5 8Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M2.5 4h2.6l2.2 11h10.4l1.9-8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="9" cy="19.5" r="1.3" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="17" cy="19.5" r="1.3" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }

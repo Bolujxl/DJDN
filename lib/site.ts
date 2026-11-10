@@ -7,8 +7,8 @@ export const SITE = {
   /** Digits only, with country code and no plus: the form wa.me links want. */
   whatsappDigits: "2348188865730",
   whatsappDisplay: "+234 818 886 5730",
-  /** WhatsApp is answered round the clock. */
-  hours: "24 hours, every day",
+  /** Opening hours shown on the customer care page. */
+  hours: "Monday to Saturday, 8am to 9pm Nigeria time",
   instagram: "https://instagram.com/djdn.ng",
   instagramHandle: "@djdn.ng",
   tiktok: "https://www.tiktok.com/@djdn.ng",

@@ -79,6 +79,83 @@
   }
 }
 
+/* Two-handle price slider (components/price-range-filter.tsx): two range inputs
+   stacked on one track. The inputs themselves ignore the pointer so the handles
+   underneath stay reachable; only the handles take it back. */
+.dual-range input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  pointer-events: none;
+}
+
+.dual-range input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+.dual-range input[type="range"]::-moz-range-track {
+  background: transparent;
+}
+
+.dual-range input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-surface);
+  cursor: grab;
+  transition: box-shadow 0.2s ease-out;
+}
+
+.dual-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  box-sizing: border-box;
+  border-radius: 9999px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-surface);
+  cursor: grab;
+}
+
+.dual-range input[type="range"]:active::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+
+.dual-range input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--color-primary);
+}
+
+.dual-range input[type="range"]:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--color-primary);
+}
+
+/* Page-to-page enter (see app/(site)/template.tsx). Ends on `translate: none`,
+   not 0 0, so the wrapper never becomes a containing block for the fixed and
+   sticky elements inside pages (the mobile add-to-cart bar, the product panel). */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-enter {
+    animation: page-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .popup-in {
     animation: popup-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;

@@ -7,7 +7,7 @@ import { EMAIL_URL, SITE, WHATSAPP_URL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Customer care",
   description:
-    "Reach DJDN on WhatsApp or email at any hour, and see how delivery works.",
+    "Reach DJDN on WhatsApp or email, Monday to Saturday, 8am to 9pm, and see how delivery works.",
 };
 
 const LINK =
@@ -27,8 +27,8 @@ export default function CustomerCarePage() {
         Customer care
       </h1>
       <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-        A real person answers, any hour. Message us for anything about an order,
-        sizing or delivery.
+        A real person answers. Message us for anything about an order, sizing
+        or delivery.
       </p>
 
       <div id="contact" className="mt-16 scroll-mt-28 border-t border-outline pt-8">

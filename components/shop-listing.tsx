@@ -6,39 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import { CATEGORY_LABELS, type Category, type Product } from "@/lib/catalogue";
 
-import type { CountryCode } from "@/lib/currency";
-
 import { useCountry } from "./country-provider";
+import { PriceRangeFilter, type PriceRange } from "./price-range-filter";
 import { ShopTile, type ShopView } from "./shop-tile";
 
 type Sort = "featured" | "price-asc" | "price-desc";
-
-/** Price bands in kobo; `min` is inclusive, `max` exclusive. */
-type PriceBand = { id: string; label: string; min?: number; max?: number };
-
-const PRICE_BANDS: PriceBand[] = [
-  { id: "under-30", label: "Under ₦30k", max: 3000000 },
-  { id: "30-40", label: "₦30–40k", min: 3000000, max: 4000000 },
-  { id: "over-40", label: "Over ₦40k", min: 4000000 },
-];
-
-function inBand(price: number, band: PriceBand) {
-  return (
-    (band.min === undefined || price >= band.min) &&
-    (band.max === undefined || price < band.max)
-  );
-}
-
-/**
- * Band label in the shopper's currency. Naira keeps the short "₦30k" style;
- * pounds and dollars are worked out from the band's edges.
- */
-function bandLabel(band: PriceBand, country: CountryCode, format: (kobo: number) => string) {
-  if (country === "NG") return band.label;
-  if (band.min === undefined) return `Under ${format(band.max!)}`;
-  if (band.max === undefined) return `Over ${format(band.min)}`;
-  return `${format(band.min)} to ${format(band.max)}`;
-}
 
 const SORTS: { value: Sort; label: string }[] = [
   { value: "featured", label: "Featured" },
@@ -65,25 +37,26 @@ export function ShopListing({
   const [view, setView] = useState<ShopView>("look");
   const [sort, setSort] = useState<Sort>("featured");
   const [category, setCategory] = useState<Category | "all">("all");
-  const [price, setPrice] = useState<PriceBand["id"] | "any">("any");
+  const [range, setRange] = useState<PriceRange | null>(null);
   const [ready, setReady] = useState(false);
-  const { country, format } = useCountry();
+  const { country } = useCountry();
 
   const categories = useMemo(
     () => Array.from(new Set(products.map((p) => p.category))),
     [products],
   );
 
-  // Only offer price bands that have something in them, and only when there is
-  // more than one to choose between.
-  const bands = useMemo(() => {
-    const populated = PRICE_BANDS.filter((band) =>
-      products.some((p) => inBand(p.price, band)),
-    );
-    return populated.length > 1 ? populated : [];
+  // Price bounds in whole naira, rounded out to the nearest thousand so the
+  // slider ends on round numbers. Null when every piece costs the same.
+  const bounds = useMemo<PriceRange | null>(() => {
+    if (products.length === 0) return null;
+    const prices = products.map((p) => p.price / 100);
+    const low = Math.floor(Math.min(...prices) / 1000) * 1000;
+    const high = Math.ceil(Math.max(...prices) / 1000) * 1000;
+    return low < high ? [low, high] : null;
   }, [products]);
 
-  // The filter choices live in the URL (?order=, ?type=, ?price=, ?view=) so the
+  // The filter choices live in the URL (?order=, ?type=, ?min=, ?max=, ?view=) so the
   // back button from a product brings the shopper back to the same list, and a
   // filtered view can be shared. The server renders the defaults; this applies
   // whatever the URL carries once the page is up.
@@ -91,14 +64,23 @@ export function ShopListing({
     const params = new URLSearchParams(window.location.search);
     const order = params.get("order");
     const type = params.get("type");
-    const band = params.get("price");
     const photo = params.get("view");
+    const lo = Number(params.get("min"));
+    const hi = Number(params.get("max"));
+    if (
+      bounds &&
+      lo >= bounds[0] &&
+      hi <= bounds[1] &&
+      lo < hi &&
+      (lo > bounds[0] || hi < bounds[1])
+    ) {
+      setRange([lo, hi]);
+    }
     if (SORTS.some((s) => s.value === order)) setSort(order as Sort);
     if (categories.some((c) => c === type)) setCategory(type as Category);
-    if (PRICE_BANDS.some((b) => b.id === band)) setPrice(band as PriceBand["id"]);
     if (photo === "product") setView("product");
     setReady(true);
-  }, [categories]);
+  }, [categories, bounds]);
 
   useEffect(() => {
     if (!ready) return;
@@ -107,27 +89,32 @@ export function ShopListing({
       value === fallback ? params.delete(key) : params.set(key, value);
     set("order", sort, "featured");
     set("type", category, "all");
-    set("price", price, "any");
     set("view", view, "look");
+    if (range) {
+      params.set("min", String(range[0]));
+      params.set("max", String(range[1]));
+    } else {
+      params.delete("min");
+      params.delete("max");
+    }
     const query = params.toString();
     window.history.replaceState(
       window.history.state,
       "",
       `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
     );
-  }, [ready, sort, category, price, view]);
+  }, [ready, sort, category, range, view]);
 
   const visible = useMemo(() => {
-    const band = PRICE_BANDS.find((b) => b.id === price);
     const filtered = products.filter(
       (p) =>
         (category === "all" || p.category === category) &&
-        (!band || inBand(p.price, band)),
+        (!range || (p.price / 100 >= range[0] && p.price / 100 <= range[1])),
     );
     if (sort === "price-asc") return [...filtered].sort((a, b) => a.price - b.price);
     if (sort === "price-desc") return [...filtered].sort((a, b) => b.price - a.price);
     return filtered;
-  }, [products, category, price, sort]);
+  }, [products, category, range, sort]);
 
   // Complete the last desktop row (4 across) with light cards that deepen to
   // a soft ink fade at the bottom and carry a faint logo, so a sparse result
@@ -153,7 +140,7 @@ export function ShopListing({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-y border-outline px-4 py-3 sm:px-6 lg:px-8">
+      <div className="relative flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-y border-outline px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <div role="group" aria-label="Photo view" className="flex gap-4">
             {(["look", "product"] as const).map((value) => (
@@ -193,28 +180,14 @@ export function ShopListing({
             </div>
           )}
 
-          {bands.length > 0 && (
-            <div role="group" aria-label="Price" className="flex gap-4">
-              <button
-                type="button"
-                aria-pressed={price === "any"}
-                onClick={() => setPrice("any")}
-                className={chip(price === "any")}
-              >
-                Any price
-              </button>
-              {bands.map((band) => (
-                <button
-                  key={band.id}
-                  type="button"
-                  aria-pressed={price === band.id}
-                  onClick={() => setPrice(band.id)}
-                  className={chip(price === band.id)}
-                >
-                  {bandLabel(band, country, format)}
-                </button>
-              ))}
-            </div>
+          {/* The slider works in naira, so it only shows while prices do. */}
+          {bounds && country === "NG" && (
+            <PriceRangeFilter
+              bounds={bounds}
+              value={range}
+              onChange={setRange}
+              chipClass={chip}
+            />
           )}
         </div>
 
