@@ -156,6 +156,64 @@
   }
 }
 
+/* "Request sent" moment (components/request-sent.tsx): a green disc pops in,
+   its check draws itself, and a hairline counts down to the form resetting.
+   Hovering or focusing the block pauses the countdown so the reference can be
+   copied. The check is fully drawn by default, so reduced motion just sees the
+   finished state and no countdown (the "send another" button still resets). */
+@keyframes sent-pop {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes sent-draw {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sent-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.sent-check {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sent-disc {
+    animation: sent-pop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .sent-check {
+    animation: sent-draw 0.45s ease-out 0.4s both;
+  }
+
+  .sent-countdown {
+    animation: sent-countdown var(--reset, 30s) linear forwards;
+  }
+
+  .sent-card:hover .sent-countdown,
+  .sent-card:focus-within .sent-countdown {
+    animation-play-state: paused;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .popup-in {
     animation: popup-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;

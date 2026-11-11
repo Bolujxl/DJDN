@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+
+import { RequestSent } from "./request-sent";
 
 import { requestOrderStatus } from "@/app/(site)/track-order/request-actions";
 import {
@@ -23,6 +25,14 @@ const LINK =
  * because that is often quicker for both sides.
  */
 export function StatusRequestForm() {
+  // Bumping the key remounts the form, which clears it and its result.
+  const [attempt, setAttempt] = useState(0);
+  return (
+    <StatusForm key={attempt} onReset={() => setAttempt((n) => n + 1)} />
+  );
+}
+
+function StatusForm({ onReset }: { onReset: () => void }) {
   const [state, action, pending] = useActionState(
     requestOrderStatus,
     EMPTY_STATUS_REQUEST,
@@ -40,22 +50,26 @@ export function StatusRequestForm() {
     </>
   );
 
-  if (state.status === "sent") {
+  if (state.status === "sent" && state.reference) {
     return (
       <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center bg-background px-4 py-20 sm:px-6 lg:px-8">
-        <div role="status" className="w-full max-w-sm text-center">
-          <h1 className="text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
-            Request sent
-          </h1>
-          <p className="mt-6 font-sans text-sm leading-relaxed text-ink">
-            Your reference is{" "}
-            <span className="font-medium tabular-nums">{state.reference}</span>.
+        <RequestSent
+          as="h1"
+          align="center"
+          title="Request sent"
+          reference={state.reference}
+          steps={["Sent", "We check your order", "We reply"]}
+          resetLabel="Ask about another order"
+          onReset={onReset}
+        >
+          <p>
+            We&rsquo;ll reply to{" "}
+            <span className="text-ink">{state.values.email}</span> with the
+            status of order{" "}
+            <span className="text-ink">{state.values.orderId}</span>.
           </p>
-          <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
-            We&rsquo;ll reply to {state.values.email} with the status of order{" "}
-            {state.values.orderId}. We answer {SITE.hours}.
-          </p>
-        </div>
+          <p>We answer {SITE.hours}.</p>
+        </RequestSent>
       </section>
     );
   }

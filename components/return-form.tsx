@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { submitReturn } from "@/app/(site)/returns/actions";
 import { EMPTY_RETURN, RETURN_KINDS, type ReturnField } from "@/lib/returns";
 import { EMAIL_URL, SITE, WHATSAPP_URL } from "@/lib/site";
+
+import { RequestSent } from "./request-sent";
 
 const INPUT =
   "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-base text-ink placeholder:text-ink-muted transition-colors focus:border-primary";
@@ -17,29 +19,39 @@ const LABEL = "mb-2 block font-sans text-xs text-ink-muted";
  * Four fields plus what the customer wants, and a short code they can quote.
  */
 export function ReturnForm() {
+  // Bumping the key remounts the form, which clears it and its result.
+  const [attempt, setAttempt] = useState(0);
+  return <ReturnFormInner key={attempt} onReset={() => setAttempt((n) => n + 1)} />;
+}
+
+function ReturnFormInner({ onReset }: { onReset: () => void }) {
   const [state, action, pending] = useActionState(submitReturn, EMPTY_RETURN);
 
-  if (state.status === "sent") {
+  if (state.status === "sent" && state.reference) {
     return (
-      <div role="status" className="border-t border-outline pt-8">
-        <h2 className="text-3xl leading-[1] tracking-[-0.04em] text-ink">
-          Request received
-        </h2>
-        <p className="mt-4 font-sans text-sm leading-relaxed text-ink">
-          Your reference is{" "}
-          <span className="font-medium tabular-nums">{state.reference}</span>.
+      <RequestSent
+        title="Request received"
+        reference={state.reference}
+        steps={["Received", "We reply by email", "You post it back"]}
+        resetLabel="Send another request"
+        onReset={onReset}
+      >
+        <p>
+          We&rsquo;ll reply
+          {state.values.email ? (
+            <>
+              {" "}
+              to <span className="text-ink">{state.values.email}</span>
+            </>
+          ) : null}{" "}
+          with how to send the item back, and the return charge if you asked for
+          a refund. We answer {SITE.hours}.
         </p>
-        <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-          We&rsquo;ll reply by email
-          {state.values.email ? ` to ${state.values.email}` : ""} with how to send
-          the item back, and the return charge if you asked for a refund. We
-          answer {SITE.hours}.
-        </p>
-        <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
+        <p>
           Please don&rsquo;t post anything until you&rsquo;ve heard from us. Once
           we reply, you have 5 working days to send it back.
         </p>
-      </div>
+      </RequestSent>
     );
   }
 
