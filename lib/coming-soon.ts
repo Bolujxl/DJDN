@@ -25,12 +25,6 @@ export const COMING_SOON = {
     description:
       "Look up an order with your order number and email, and see where it is from payment to delivery.",
   },
-  returns: {
-    section: "Help",
-    title: "Returns",
-    description:
-      "Our return and exchange policy is being finalised and will be published here.",
-  },
   account: {
     section: "Help",
     title: "My account",

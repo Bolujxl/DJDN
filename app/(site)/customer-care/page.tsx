@@ -33,34 +33,53 @@ export default function CustomerCarePage() {
 
       <div id="contact" className="mt-16 scroll-mt-28 border-t border-outline pt-8">
         <h2 className="font-sans text-sm text-ink-muted">Contact us</h2>
-        <dl className="mt-6 grid gap-8 sm:grid-cols-3">
+        {/* Three facts at one calm size: how to reach us, and when. The time
+            zone is spelled out once, small, under the hours. */}
+        <dl className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <dt className="font-sans text-xs text-ink-muted">WhatsApp</dt>
-            <dd className="mt-2 font-sans text-sm text-ink">
+            <dd className="mt-2">
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={LINK}
+                className="group inline-flex items-baseline gap-1.5 text-xl leading-tight tracking-[-0.02em] text-ink transition-colors hover:text-primary sm:text-2xl"
               >
-                {SITE.whatsappDisplay}
+                <span className="tabular-nums">{SITE.whatsappDisplay}</span>
+                <span
+                  aria-hidden="true"
+                  className="text-base text-ink-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary"
+                >
+                  ↗
+                </span>
               </a>
             </dd>
           </div>
           <div>
             <dt className="font-sans text-xs text-ink-muted">Email</dt>
-            <dd className="mt-2 font-sans text-sm text-ink">
-              <a href={EMAIL_URL} className={LINK}>
+            <dd className="mt-2">
+              <a
+                href={EMAIL_URL}
+                className="break-all text-xl leading-tight tracking-[-0.02em] text-ink underline decoration-outline decoration-1 underline-offset-[6px] transition-colors hover:text-primary hover:decoration-primary sm:text-2xl"
+              >
                 {SITE.email}
               </a>
             </dd>
           </div>
           <div>
-            <dt className="font-sans text-xs text-ink-muted">Open</dt>
-            <dd className="mt-2 font-sans text-sm text-ink">{SITE.hours}</dd>
+            <dt className="font-sans text-xs text-ink-muted">Hours</dt>
+            <dd className="mt-2">
+              <p className="text-xl leading-tight tracking-[-0.02em] text-ink sm:text-2xl">
+                {SITE.hoursParts.days}, {SITE.hoursParts.time}
+              </p>
+              <p className="mt-1.5 font-sans text-xs text-ink-muted">
+                {SITE.hoursParts.zone}
+              </p>
+            </dd>
           </div>
         </dl>
-        <p className="mt-6 font-sans text-sm text-ink-muted">
+
+        <p className="mt-8 font-sans text-sm text-ink-muted">
           Asking about an order? Have your order number ready, or{" "}
           <Link href="/track-order" className={LINK}>
             track it here
