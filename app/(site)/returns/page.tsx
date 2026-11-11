@@ -17,6 +17,7 @@ const STEPS = [
   "Find your order number in your confirmation email.",
   "Fill in the request form.",
   "We reply by email with how to send it back, and the return charge if you want a refund.",
+  "Post it back within 5 working days of our reply.",
 ];
 
 /**
@@ -54,15 +55,18 @@ export default function ReturnsPage() {
             <div>
               <dt className="font-sans text-sm text-ink">Exchanges are free</dt>
               <dd className="mt-2 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-                Send it back unworn, unused and undamaged, with no stains or
-                alterations, in the condition it reached you.
+                Send it back unworn, unused and undamaged, with its tags still
+                attached and no stains or alterations, in the condition it
+                reached you.
               </dd>
             </div>
             <div>
               <dt className="font-sans text-sm text-ink">Refunds</dt>
               <dd className="mt-2 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
                 Prefer your money back? A return charge applies and comes off
-                the refund; we tell you the amount before you send anything. If
+                the refund; we tell you the amount before you send anything. The
+                delivery fee you paid isn&rsquo;t refunded, because it goes to
+                the courier. If
                 a piece comes back in a different condition from how it left us,
                 we may deduct for the difference.
               </dd>
@@ -77,8 +81,9 @@ export default function ReturnsPage() {
             <div>
               <dt className="font-sans text-sm text-ink">After we get it</dt>
               <dd className="mt-2 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-                Once your parcel reaches us we process it and email you.
-                Refunds take up to 14 business days from then.
+                Post your parcel within 5 working days of our reply. Once it
+                reaches us we process it and email you. Refunds take up to 14
+                business days from then.
               </dd>
             </div>
           </dl>

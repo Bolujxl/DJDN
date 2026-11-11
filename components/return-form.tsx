@@ -36,7 +36,8 @@ export function ReturnForm() {
           answer {SITE.hours}.
         </p>
         <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-          Please don&rsquo;t post anything until you&rsquo;ve heard from us.
+          Please don&rsquo;t post anything until you&rsquo;ve heard from us. Once
+          we reply, you have 5 working days to send it back.
         </p>
       </div>
     );
