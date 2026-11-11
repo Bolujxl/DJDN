@@ -23,5 +23,14 @@ export const SITE = {
   tiktok: "https://www.tiktok.com/@djdn.ng",
 } as const;
 
+/**
+ * Public origin, used for links and the logo in emails. The same variable the
+ * share metadata in app/layout.tsx reads, with the same placeholder fallback
+ * until the real domain is chosen.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://djdn.com"
+).replace(/\/$/, "");
+
 export const WHATSAPP_URL = `https://wa.me/${SITE.whatsappDigits}`;
 export const EMAIL_URL = `mailto:${SITE.email}`;
