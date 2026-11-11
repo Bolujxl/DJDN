@@ -19,12 +19,6 @@ export type ComingSoonPage = {
 };
 
 export const COMING_SOON = {
-  "track-order": {
-    section: "Help",
-    title: "Track your order",
-    description:
-      "Look up an order with your order number and email, and see where it is from payment to delivery.",
-  },
   account: {
     section: "Help",
     title: "My account",
