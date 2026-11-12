@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ComingSoon } from "@/components/coming-soon";
-import { SignInPanel } from "@/components/sign-in-panel";
+import { AuthPanel } from "@/components/auth-panel";
 import { formatNaira } from "@/lib/format";
 import {
   FULFILMENT_LABELS,
@@ -15,19 +15,30 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "My account" };
 
+/** A path on this site and nothing else, so a link can't send people elsewhere. */
+function safeNext(value: string | undefined) {
+  return value &&
+    value.startsWith("/") &&
+    !value.startsWith("//") &&
+    !value.includes("\\")
+    ? value
+    : "/account";
+}
+
 /**
- * Signed out: Google or email-link sign-in. Signed in: order history and the
- * email on the account. Until Supabase is configured this stays the "coming
- * soon" page, so nothing breaks on a deploy that doesn't have the keys yet.
+ * Signed out: log in or create an account (email and password), then back to
+ * the page they came from (`?next=`). Signed in: order history and the email on
+ * the account. Until Supabase is configured this stays the "coming soon" page,
+ * so nothing breaks on a deploy that doesn't have the keys yet.
  */
 export default async function AccountPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; view?: string }>;
 }) {
   if (!isSupabaseConfigured) return <ComingSoon page="account" />;
 
-  const { error } = await searchParams;
+  const { error, next, view } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -35,14 +46,12 @@ export default async function AccountPage({
 
   if (!user) {
     return (
-      <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center bg-background px-4 py-20 sm:px-6 lg:px-8">
-        <h1 className="text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
-          Sign in
-        </h1>
-        <p className="mb-10 mt-4 max-w-sm text-center font-sans text-sm text-ink-muted">
-          See your orders and keep your details for next time.
-        </p>
-        <SignInPanel failed={error === "sign-in"} />
+      <section className="bg-surface px-4 pb-16 pt-16 sm:px-6 lg:px-8 lg:pb-24 lg:pt-24">
+        <AuthPanel
+          next={safeNext(next)}
+          initialView={view === "create" ? "create" : "login"}
+          linkFailed={error === "sign-in"}
+        />
       </section>
     );
   }
