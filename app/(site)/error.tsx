@@ -1,9 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 /** Shown when a page throws while rendering. The header and footer stay; only this section is replaced. */
-export default function Error({ reset }: { error: Error; reset: () => void }) {
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  // The page itself says nothing about what broke, so keep the cause in the
+  // browser console where it can be read off a phone or a bug report.
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <section className="flex min-h-[60svh] flex-col items-center justify-center bg-background px-4 py-20 text-center sm:px-6 lg:px-8">
       <h1 className="text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">

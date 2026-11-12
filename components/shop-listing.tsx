@@ -82,27 +82,38 @@ export function ShopListing({
     setReady(true);
   }, [categories, bounds]);
 
+  // The address bar is updated once the choices stop changing, not on every
+  // movement: dragging the price slider changes them dozens of times a second,
+  // and Safari on iPhone throws an error after 100 history updates in 30
+  // seconds, which used to land on the "Something went wrong" page.
   useEffect(() => {
     if (!ready) return;
-    const params = new URLSearchParams(window.location.search);
-    const set = (key: string, value: string, fallback: string) =>
-      value === fallback ? params.delete(key) : params.set(key, value);
-    set("order", sort, "featured");
-    set("type", category, "all");
-    set("view", view, "look");
-    if (range) {
-      params.set("min", String(range[0]));
-      params.set("max", String(range[1]));
-    } else {
-      params.delete("min");
-      params.delete("max");
-    }
-    const query = params.toString();
-    window.history.replaceState(
-      window.history.state,
-      "",
-      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
-    );
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      const set = (key: string, value: string, fallback: string) =>
+        value === fallback ? params.delete(key) : params.set(key, value);
+      set("order", sort, "featured");
+      set("type", category, "all");
+      set("view", view, "look");
+      if (range) {
+        params.set("min", String(range[0]));
+        params.set("max", String(range[1]));
+      } else {
+        params.delete("min");
+        params.delete("max");
+      }
+      const query = params.toString();
+      const next = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      if (next === current) return;
+      try {
+        window.history.replaceState(window.history.state, "", next);
+      } catch {
+        // The shareable link is a nicety. If the browser refuses the update,
+        // the filter still works; it must never take the page down.
+      }
+    }, 250);
+    return () => clearTimeout(timer);
   }, [ready, sort, category, range, view]);
 
   const visible = useMemo(() => {
