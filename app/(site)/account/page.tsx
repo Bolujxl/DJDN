@@ -46,7 +46,7 @@ export default async function AccountPage({
 
   if (!user) {
     return (
-      <section className="bg-surface px-4 pb-16 pt-16 sm:px-6 lg:px-8 lg:pb-24 lg:pt-24">
+      <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center bg-background px-4 py-20 sm:px-6 lg:px-8">
         <AuthPanel
           next={safeNext(next)}
           initialView={view === "create" ? "create" : "login"}

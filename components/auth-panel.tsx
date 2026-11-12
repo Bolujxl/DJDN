@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/browser";
 
 /**
- * Account log in and sign up, set out like about:blank: a short left column to
- * switch between "Log in" and "Create an account", and the form on the right.
- * Email and password, a "forgot your password?" link, and a tick-box that
- * records agreement to the Terms and Privacy policy when an account is made.
+ * Account log in and sign up, in the same centred layout and outline buttons as
+ * the rest of the site (Track order, Returns): Google first, then email and
+ * password. Creating an account asks for a first and last name and a tick-box
+ * agreeing to the Terms and Privacy policy. "Forgot your password?" sends a
+ * reset link.
  *
- * After logging in or creating an account the customer goes back to `next`,
- * the page they were on (for example the cart), so they carry on where they
+ * After logging in or creating an account the customer goes back to `next`, the
+ * page they were on (for example the cart), so they carry on where they
  * stopped. Checkout itself never needs an account.
  */
 type View = "login" | "create" | "forgot";
@@ -22,8 +24,11 @@ type Status = "idle" | "loading" | "sent" | "confirm";
 const INPUT =
   "w-full rounded-[18px] border border-outline bg-surface px-5 py-3 font-sans text-base text-ink placeholder:text-ink-muted transition-colors focus:border-primary aria-[invalid=true]:border-error";
 const LABEL = "mb-2 block font-sans text-xs text-ink-muted";
+const BUTTON =
+  "rounded-[18px] border border-ink px-7 py-3.5 font-sans text-sm text-ink transition-colors hover:border-primary hover:bg-primary hover:text-white active:scale-[0.98] disabled:opacity-60";
 const LINK =
   "text-ink underline underline-offset-4 transition-colors hover:text-primary";
+const FIELD_ERROR = "mt-2 font-sans text-sm text-error";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD = 8;
 
@@ -86,6 +91,41 @@ export function AuthPanel({
         ? "This is taking longer than usual. Please try again in a moment."
         : "Something went wrong. Please try again.",
     );
+  }
+
+  async function google() {
+    setMessage(null);
+    // On the sign-up view the tick-box covers Google too.
+    if (view === "create" && !agreed) {
+      setErrors({ agreed: "Please tick the box to continue." });
+      return;
+    }
+    setErrors({});
+    setStatus("loading");
+    try {
+      // Ask Supabase first. If Google isn't switched on, the redirect would
+      // land on a raw error page on Supabase's own site.
+      const response = await withTimeout(
+        fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+          headers: { apikey: SUPABASE_ANON_KEY ?? "" },
+        }),
+      );
+      const settings = response.ok ? await response.json() : null;
+      if (!settings?.external?.google) {
+        setStatus("idle");
+        setMessage("Google sign-in isn’t switched on yet. Please use your email and password for now.");
+        return;
+      }
+      const { error } = await createClient().auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        },
+      });
+      if (error) fail(error);
+    } catch (caught) {
+      fail(caught);
+    }
   }
 
   async function submit(e: React.FormEvent) {
@@ -183,57 +223,35 @@ export function AuthPanel({
     }
   }
 
-  const heading =
-    view === "create"
+  const done = status === "confirm" || status === "sent";
+  const heading = done
+    ? "Check your email"
+    : view === "create"
       ? "Create an account"
       : view === "forgot"
         ? "Reset your password"
         : "Log in";
-
-  const navItem = (target: "login" | "create", label: string) =>
-    view === target ? (
-      <span className="text-ink-muted">/ {label}</span>
-    ) : (
-      <button
-        type="button"
-        onClick={() => go(target)}
-        className="text-left text-ink transition-colors hover:text-primary"
-      >
-        {label}
-      </button>
-    );
+  const subtitle = done
+    ? null
+    : view === "create"
+      ? "See your orders in one place. You don’t need an account to check out."
+      : view === "forgot"
+        ? "Enter your email and we’ll send you a link to choose a new password."
+        : "See your orders and keep your details for next time.";
 
   return (
-    <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
-      <nav
-        aria-label="Account"
-        className="flex flex-col items-start gap-2 font-sans text-sm lg:col-span-3"
-      >
-        {navItem("login", "Log in")}
-        {navItem("create", "Create an account")}
-      </nav>
+    <>
+      <h1 className="text-center text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
+        {heading}
+      </h1>
+      <p className="mb-10 mt-4 max-w-sm text-center font-sans text-sm leading-relaxed text-ink-muted">
+        {subtitle}
+      </p>
 
-      <div className="lg:col-span-6">
-        <h1 className="text-4xl leading-[0.95] tracking-[-0.04em] text-ink sm:text-5xl">
-          {heading}
-        </h1>
-
-        {view === "create" && status !== "confirm" && (
-          <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-            See your orders in one place. You don&rsquo;t need an account to check
-            out.
-          </p>
-        )}
-        {view === "forgot" && status !== "sent" && (
-          <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-            Enter your email and we&rsquo;ll send you a link to choose a new
-            password.
-          </p>
-        )}
-
-        {status === "confirm" ? (
-          <div role="status" className="mt-8 max-w-md font-sans text-sm leading-relaxed text-ink">
-            <p>Check your email. We&rsquo;ve sent a link to {fields.email.trim()}.</p>
+      <div className="w-full max-w-sm">
+        {status === "confirm" && (
+          <div role="status" className="text-center font-sans text-sm leading-relaxed text-ink">
+            <p>We&rsquo;ve sent a link to {fields.email.trim()}.</p>
             <p className="mt-3 text-ink-muted">
               Click it once to confirm your account, then{" "}
               <button type="button" onClick={() => go("login")} className={LINK}>
@@ -242,11 +260,13 @@ export function AuthPanel({
               .
             </p>
           </div>
-        ) : status === "sent" ? (
-          <div role="status" className="mt-8 max-w-md font-sans text-sm leading-relaxed text-ink">
+        )}
+
+        {status === "sent" && (
+          <div role="status" className="text-center font-sans text-sm leading-relaxed text-ink">
             <p>
-              If an account exists for {fields.email.trim()}, we&rsquo;ve sent a
-              link to reset your password.
+              If an account exists for {fields.email.trim()}, we&rsquo;ve sent a link
+              to reset your password.
             </p>
             <p className="mt-3 text-ink-muted">
               <button type="button" onClick={() => go("login")} className={LINK}>
@@ -254,165 +274,225 @@ export function AuthPanel({
               </button>
             </p>
           </div>
-        ) : (
-          <form onSubmit={submit} noValidate className="mt-8 flex max-w-md flex-col gap-5">
-            {view === "create" && (
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="auth-first" className={LABEL}>
-                    First name
-                  </label>
-                  <input
-                    id="auth-first"
-                    value={fields.firstName}
-                    onChange={set("firstName")}
-                    autoComplete="given-name"
-                    aria-invalid={errors.firstName ? true : undefined}
-                    className={INPUT}
-                  />
-                  {errors.firstName && <p className="mt-2 font-sans text-sm text-error">{errors.firstName}</p>}
-                </div>
-                <div>
-                  <label htmlFor="auth-last" className={LABEL}>
-                    Last name
-                  </label>
-                  <input
-                    id="auth-last"
-                    value={fields.lastName}
-                    onChange={set("lastName")}
-                    autoComplete="family-name"
-                    aria-invalid={errors.lastName ? true : undefined}
-                    className={INPUT}
-                  />
-                  {errors.lastName && <p className="mt-2 font-sans text-sm text-error">{errors.lastName}</p>}
-                </div>
-              </div>
-            )}
+        )}
 
-            <div>
-              <label htmlFor="auth-email" className={LABEL}>
-                Email
-              </label>
-              <input
-                id="auth-email"
-                type="email"
-                value={fields.email}
-                onChange={set("email")}
-                autoComplete="email"
-                aria-invalid={errors.email ? true : undefined}
-                className={INPUT}
-              />
-              {errors.email && <p className="mt-2 font-sans text-sm text-error">{errors.email}</p>}
-            </div>
-
+        {!done && (
+          <>
             {view !== "forgot" && (
-              <div>
-                <label htmlFor="auth-password" className={LABEL}>
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="auth-password"
-                    type={showPassword ? "text" : "password"}
-                    value={fields.password}
-                    onChange={set("password")}
-                    autoComplete={view === "create" ? "new-password" : "current-password"}
-                    aria-invalid={errors.password ? true : undefined}
-                    className={`${INPUT} pr-14`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    aria-pressed={showPassword}
-                    className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
-                  >
-                    <EyeIcon off={showPassword} />
-                  </button>
+              <>
+                <button
+                  type="button"
+                  onClick={google}
+                  disabled={busy}
+                  className={`flex w-full items-center justify-center gap-3 ${BUTTON}`}
+                >
+                  <GoogleMark />
+                  Continue with Google
+                </button>
+
+                <div className="my-6 flex items-center gap-4 font-sans text-xs text-ink-muted">
+                  <span className="h-px flex-1 bg-outline" />
+                  or
+                  <span className="h-px flex-1 bg-outline" />
                 </div>
-                {errors.password && <p className="mt-2 font-sans text-sm text-error">{errors.password}</p>}
-                {view === "create" && !errors.password && (
-                  <p className="mt-2 font-sans text-xs text-ink-muted">At least {MIN_PASSWORD} characters.</p>
-                )}
-              </div>
+              </>
             )}
 
-            {view === "create" && (
+            <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+              {view === "create" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="auth-first" className={LABEL}>
+                      First name
+                    </label>
+                    <input
+                      id="auth-first"
+                      value={fields.firstName}
+                      onChange={set("firstName")}
+                      autoComplete="given-name"
+                      aria-invalid={errors.firstName ? true : undefined}
+                      className={INPUT}
+                    />
+                    {errors.firstName && <p className={FIELD_ERROR}>{errors.firstName}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="auth-last" className={LABEL}>
+                      Last name
+                    </label>
+                    <input
+                      id="auth-last"
+                      value={fields.lastName}
+                      onChange={set("lastName")}
+                      autoComplete="family-name"
+                      aria-invalid={errors.lastName ? true : undefined}
+                      className={INPUT}
+                    />
+                    {errors.lastName && <p className={FIELD_ERROR}>{errors.lastName}</p>}
+                  </div>
+                </div>
+              )}
+
               <div>
-                <label className="flex items-start gap-3 font-sans text-sm leading-relaxed text-ink-muted">
-                  <input
-                    type="checkbox"
-                    checked={agreed}
-                    onChange={(e) => setAgreed(e.target.checked)}
-                    aria-invalid={errors.agreed ? true : undefined}
-                    className="mt-1 size-4 shrink-0 accent-ink"
-                  />
-                  <span>
-                    I agree to the{" "}
-                    <Link href="/policies/terms" target="_blank" className={LINK}>
-                      Terms of service
-                    </Link>{" "}
-                    and the{" "}
-                    <Link href="/policies/privacy" target="_blank" className={LINK}>
-                      Privacy policy
-                    </Link>
-                    .
-                  </span>
+                <label htmlFor="auth-email" className={LABEL}>
+                  Email
                 </label>
-                {errors.agreed && <p className="mt-2 font-sans text-sm text-error">{errors.agreed}</p>}
+                <input
+                  id="auth-email"
+                  type="email"
+                  value={fields.email}
+                  onChange={set("email")}
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  aria-invalid={errors.email ? true : undefined}
+                  className={INPUT}
+                />
+                {errors.email && <p className={FIELD_ERROR}>{errors.email}</p>}
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={busy}
-              className="w-full rounded-[18px] bg-ink px-7 py-3.5 font-sans text-sm text-surface transition-colors hover:bg-primary active:scale-[0.98] disabled:opacity-60"
-            >
-              {busy
-                ? "One moment…"
-                : view === "create"
-                  ? "Create an account"
-                  : view === "forgot"
-                    ? "Send reset link"
-                    : "Log in"}
-            </button>
+              {view !== "forgot" && (
+                <div>
+                  <label htmlFor="auth-password" className={LABEL}>
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="auth-password"
+                      type={showPassword ? "text" : "password"}
+                      value={fields.password}
+                      onChange={set("password")}
+                      autoComplete={view === "create" ? "new-password" : "current-password"}
+                      aria-invalid={errors.password ? true : undefined}
+                      className={`${INPUT} pr-14`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}
+                      className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
+                    >
+                      <EyeIcon off={showPassword} />
+                    </button>
+                  </div>
+                  {errors.password && <p className={FIELD_ERROR}>{errors.password}</p>}
+                  {view === "create" && !errors.password && (
+                    <p className="mt-2 font-sans text-xs text-ink-muted">At least {MIN_PASSWORD} characters.</p>
+                  )}
+                </div>
+              )}
 
-            {message && (
-              <p role="alert" className="font-sans text-sm leading-relaxed text-error">
+              {view === "create" && (
+                <div>
+                  <label className="flex items-start gap-3 font-sans text-sm leading-relaxed text-ink-muted">
+                    <input
+                      type="checkbox"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      aria-invalid={errors.agreed ? true : undefined}
+                      className="mt-1 size-4 shrink-0 accent-ink"
+                    />
+                    <span>
+                      I agree to the{" "}
+                      <Link href="/policies/terms" target="_blank" className={LINK}>
+                        Terms of service
+                      </Link>{" "}
+                      and the{" "}
+                      <Link href="/policies/privacy" target="_blank" className={LINK}>
+                        Privacy policy
+                      </Link>
+                      .
+                    </span>
+                  </label>
+                  {errors.agreed && <p className={FIELD_ERROR}>{errors.agreed}</p>}
+                </div>
+              )}
+
+              <button type="submit" disabled={busy} className={`mt-1 ${BUTTON}`}>
+                {busy
+                  ? "One moment…"
+                  : view === "create"
+                    ? "Create an account"
+                    : view === "forgot"
+                      ? "Send reset link"
+                      : "Log in"}
+              </button>
+
+              <p
+                role="alert"
+                className="min-h-6 text-center font-sans text-sm leading-relaxed text-error"
+              >
                 {message}
               </p>
-            )}
+            </form>
 
-            <p className="font-sans text-sm text-ink-muted">
+            <div className="mt-2 text-center font-sans text-sm text-ink-muted">
               {view === "login" && (
-                <>
+                <p className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                   <button type="button" onClick={() => go("forgot")} className={LINK}>
                     Forgot your password?
                   </button>
-                  <span className="mx-3" aria-hidden="true" />
                   <button type="button" onClick={() => go("create")} className={LINK}>
                     Create an account
                   </button>
-                </>
+                </p>
               )}
               {view === "create" && (
-                <>
+                <p>
                   Already have an account?{" "}
                   <button type="button" onClick={() => go("login")} className={LINK}>
                     Log in
                   </button>
-                </>
+                </p>
               )}
               {view === "forgot" && (
-                <button type="button" onClick={() => go("login")} className={LINK}>
-                  Back to log in
-                </button>
+                <p>
+                  <button type="button" onClick={() => go("login")} className={LINK}>
+                    Back to log in
+                  </button>
+                </p>
               )}
-            </p>
-          </form>
+            </div>
+
+            {view === "login" && (
+              <p className="mt-8 text-center font-sans text-xs leading-relaxed text-ink-muted">
+                By continuing with Google you agree to our{" "}
+                <Link href="/policies/terms" target="_blank" className={LINK}>
+                  Terms of service
+                </Link>{" "}
+                and{" "}
+                <Link href="/policies/privacy" target="_blank" className={LINK}>
+                  Privacy policy
+                </Link>
+                . You don&rsquo;t need an account to check out.
+              </p>
+            )}
+          </>
         )}
       </div>
-    </div>
+    </>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="#EA4335"
+        d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"
+      />
+      <path
+        fill="#4285F4"
+        d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"
+      />
+      <path
+        fill="#34A853"
+        d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"
+      />
+    </svg>
   );
 }
 

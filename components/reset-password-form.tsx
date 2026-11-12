@@ -53,7 +53,7 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="mt-8 flex max-w-md flex-col gap-5">
+    <form onSubmit={submit} noValidate className="flex w-full max-w-sm flex-col gap-5">
       <div>
         <label htmlFor="reset-password" className={LABEL}>
           New password
@@ -85,12 +85,12 @@ export function ResetPasswordForm() {
       <button
         type="submit"
         disabled={busy}
-        className="w-full rounded-[18px] bg-ink px-7 py-3.5 font-sans text-sm text-surface transition-colors hover:bg-primary active:scale-[0.98] disabled:opacity-60"
+        className="mt-1 rounded-[18px] border border-ink px-7 py-3.5 font-sans text-sm text-ink transition-colors hover:border-primary hover:bg-primary hover:text-white active:scale-[0.98] disabled:opacity-60"
       >
         {busy ? "One moment…" : "Save new password"}
       </button>
       {error && (
-        <p role="alert" className="font-sans text-sm leading-relaxed text-error">
+        <p role="alert" className="text-center font-sans text-sm leading-relaxed text-error">
           {error}
         </p>
       )}

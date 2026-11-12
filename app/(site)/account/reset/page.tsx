@@ -21,26 +21,29 @@ export default async function ResetPasswordPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <section className="bg-surface px-4 pb-16 pt-16 sm:px-6 lg:px-8 lg:pb-24 lg:pt-24">
-      <div className="lg:ml-[calc(25%+1rem)]">
-        <h1 className="text-4xl leading-[0.95] tracking-[-0.04em] text-ink sm:text-5xl">
-          Choose a new password
-        </h1>
-        {user ? (
-          <ResetPasswordForm />
-        ) : (
-          <p className="mt-8 max-w-md font-sans text-sm leading-relaxed text-ink-muted">
-            This link has expired or has already been used.{" "}
-            <Link
-              href="/account"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
-            >
-              Ask for a new one
-            </Link>{" "}
-            from the log in page.
+    <section className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center bg-background px-4 py-20 sm:px-6 lg:px-8">
+      <h1 className="text-center text-5xl leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl">
+        Choose a new password
+      </h1>
+      {user ? (
+        <>
+          <p className="mb-10 mt-4 max-w-sm text-center font-sans text-sm leading-relaxed text-ink-muted">
+            Pick something you haven&rsquo;t used before.
           </p>
-        )}
-      </div>
+          <ResetPasswordForm />
+        </>
+      ) : (
+        <p className="mt-6 max-w-sm text-center font-sans text-sm leading-relaxed text-ink-muted">
+          This link has expired or has already been used.{" "}
+          <Link
+            href="/account"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+          >
+            Ask for a new one
+          </Link>{" "}
+          from the log in page.
+        </p>
+      )}
     </section>
   );
 }
