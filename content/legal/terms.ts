@@ -7,7 +7,7 @@ export const TERMS = `# Terms of service
 
 ## Introduction
 
-These Terms of Service govern your use of the DJDN website and purchases made through it. DJDN is operated by **[Registered Business Name]**, registered in Nigeria under RC No. **[Insert RC Number, if applicable]**, with its business address at **[Insert Address]**. By accessing our website or placing an order, you agree to these Terms. Please read them carefully before making a purchase.
+These Terms of Service govern your use of the DJDN website and purchases made through it. DJDN is operated by **Deji Daniels Apparel**, registered in Nigeria under BN No. **3497940**, with its business address at **No. 3, Owonikoko Street, Mafon Bus Stop, Idimu-Ejigbo, Idimu, Lagos State, Nigeria**. By accessing our website or placing an order, you agree to these Terms. Please read them carefully before making a purchase.
 
 For enquiries, you may contact us at djdn.afr@gmail.com or via WhatsApp on +234 818 886 5730.
 

@@ -9,7 +9,7 @@ This Privacy Policy explains how DJDN collects, uses, stores and shares personal
 
 ## Who we are
 
-DJDN is a fashion brand operated by [insert full legal name of the proprietor or registered business name], of [insert principal business address] (and RC number [insert, if applicable]). For the purposes of the NDPA, the entity or person identified above is the data controller responsible for deciding how and why your personal data is processed.
+DJDN is a fashion brand operated by Deji Daniels Apparel, of No. 3, Owonikoko Street, Mafon Bus Stop, Idimu-Ejigbo, Idimu, Lagos State, Nigeria (BN number 3497940). For the purposes of the NDPA, the entity or person identified above is the data controller responsible for deciding how and why your personal data is processed.
 
 If you have a question about this Policy or wish to exercise a data protection right, contact us at djdn.afr@gmail.com or by WhatsApp on +234 818 886 5730. Our customer service hours are Monday to Saturday, 8:00 a.m. to 9:00 p.m. West Africa Time (WAT). [Confirm that these contact details and service hours remain current.]
 
