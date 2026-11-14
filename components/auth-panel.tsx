@@ -29,7 +29,7 @@ const BUTTON =
 const LINK =
   "text-ink underline underline-offset-4 transition-colors hover:text-primary";
 const FIELD_ERROR = "mt-2 font-sans text-sm text-error";
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PASSWORD = 8;
 
 /** Gives up waiting after 20 seconds, so a slow service never leaves a spinner. */
@@ -69,8 +69,26 @@ export function AuthPanel({
   );
 
   const busy = status === "loading";
-  const set = (key: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) =>
+  const set = (key: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields((f) => ({ ...f, [key]: e.target.value }));
+    // Once they start fixing a field, its error message has done its job.
+    if (errors[key]) {
+      setErrors((current) => {
+        const rest = { ...current };
+        delete rest[key];
+        return rest;
+      });
+    }
+  };
+
+  // Checked when they leave the email field, so a typo shows up before they
+  // reach the button. An empty field is left alone until they try to submit.
+  function checkEmail() {
+    const email = fields.email.trim();
+    if (email && !EMAIL_PATTERN.test(email)) {
+      setErrors((current) => ({ ...current, email: "Enter a valid email address." }));
+    }
+  }
 
   function go(nextView: View) {
     setView(nextView);
@@ -307,6 +325,7 @@ export function AuthPanel({
                     </label>
                     <input
                       id="auth-first"
+                      name="given-name"
                       value={fields.firstName}
                       onChange={set("firstName")}
                       autoComplete="given-name"
@@ -321,6 +340,7 @@ export function AuthPanel({
                     </label>
                     <input
                       id="auth-last"
+                      name="family-name"
                       value={fields.lastName}
                       onChange={set("lastName")}
                       autoComplete="family-name"
@@ -338,10 +358,18 @@ export function AuthPanel({
                 </label>
                 <input
                   id="auth-email"
+                  name="email"
                   type="email"
+                  inputMode="email"
                   value={fields.email}
                   onChange={set("email")}
-                  autoComplete="email"
+                  onBlur={checkEmail}
+                  // "username" on log in lets the browser pair the email with the saved
+                  // password; "email" elsewhere lets it suggest the address itself.
+                  autoComplete={view === "login" ? "username" : "email"}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   placeholder="you@example.com"
                   aria-invalid={errors.email ? true : undefined}
                   className={INPUT}
@@ -357,6 +385,7 @@ export function AuthPanel({
                   <div className="relative">
                     <input
                       id="auth-password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       value={fields.password}
                       onChange={set("password")}
