@@ -78,6 +78,13 @@ const navLinkClass = (active: boolean) =>
       : "text-ink/80 after:scale-x-0 hover:after:scale-x-100"
   }`;
 
+/**
+ * Mobile menu rows. A phone has no hover, so the same ease happens on tap: the
+ * colour warms to orange and the row slides a hair to the right while pressed.
+ */
+const MOBILE_LINK =
+  "block py-3 font-sans text-base text-ink transition-[color,translate] duration-300 ease-out hover:text-primary active:translate-x-0.5 active:text-primary motion-reduce:transition-none";
+
 /** Icon buttons in the header: a soft circle fades in behind the icon. */
 const ICON_BUTTON =
   "rounded-full p-3 text-ink transition-colors duration-300 ease-out hover:bg-secondary/8 motion-reduce:transition-none";
@@ -106,7 +113,7 @@ function NavTree({
                 <Link
                   href={link.href}
                   onClick={onNavigate}
-                  className="block py-1.5 font-sans text-sm text-ink transition-[color,translate] duration-300 ease-out hover:translate-x-0.5 hover:text-primary motion-reduce:transition-none"
+                  className="block py-1.5 font-sans text-sm text-ink transition-[color,translate] duration-300 ease-out hover:translate-x-0.5 hover:text-primary active:translate-x-0.5 active:text-primary motion-reduce:transition-none"
                 >
                   {link.label}
                 </Link>
@@ -217,7 +224,7 @@ export function SiteHeader() {
       const stops = [
         trigger,
         ...overlay.querySelectorAll<HTMLElement>("a[href], button"),
-      ].filter((el): el is HTMLElement => el !== null);
+      ].filter((el): el is HTMLElement => el !== null && !el.closest("[inert]"));
       const first = stops[0];
       const last = stops[stops.length - 1];
       if (e.shiftKey && document.activeElement === first) {
@@ -260,12 +267,29 @@ export function SiteHeader() {
         <button
           ref={menuButtonRef}
           type="button"
-          className="-ml-2 rounded-full p-3 transition-colors hover:bg-secondary/8 lg:hidden"
+          className="-ml-2 rounded-full p-3 transition-[background-color,scale] duration-300 ease-out hover:bg-secondary/8 active:scale-90 active:bg-secondary/8 motion-reduce:transition-none lg:hidden"
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((v) => !v)}
         >
-          {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+          {/* Both icons stay in place and trade places: the bars turn and fade
+              out as the cross turns and fades in. */}
+          <span className="relative block size-[22px]">
+            <span
+              className={`absolute inset-0 transition-[opacity,rotate] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+                mobileOpen ? "rotate-90 opacity-0" : ""
+              }`}
+            >
+              <MenuIcon />
+            </span>
+            <span
+              className={`absolute inset-0 transition-[opacity,rotate] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+                mobileOpen ? "" : "-rotate-90 opacity-0"
+              }`}
+            >
+              <CloseIcon />
+            </span>
+          </span>
         </button>
 
         {/* Logo mark */}
@@ -391,7 +415,7 @@ export function SiteHeader() {
       {mobileOpen && (
         <div
           ref={overlayRef}
-          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-background lg:hidden"
+          className="popup-in fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto bg-background lg:hidden"
         >
           <nav aria-label="Mobile" className="px-4 py-6 sm:px-6">
             <ul className="divide-y divide-outline">
@@ -407,7 +431,7 @@ export function SiteHeader() {
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
+                      className={MOBILE_LINK}
                     >
                       {item.label}
                     </Link>
@@ -425,7 +449,7 @@ export function SiteHeader() {
                   <Link
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block py-3 font-sans text-base text-ink transition-colors hover:text-primary"
+                    className={MOBILE_LINK}
                   >
                     {link.label}
                   </Link>
@@ -459,27 +483,41 @@ function MobileBranch({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors hover:text-primary"
+        className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors duration-300 ease-out hover:text-primary active:text-primary motion-reduce:transition-none"
       >
         {item.label}
-        <span className={`transition-transform ${open ? "rotate-45" : ""}`}>
+        <span
+          className={`transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+            open ? "rotate-45" : ""
+          }`}
+        >
           <PlusIcon />
         </span>
       </button>
-      {open && (
-        <div className="pb-4 pl-1">
-          <NavTree item={item} onNavigate={onNavigate} />
-          {item.showAll && item.href && (
-            <Link
-              href={item.href}
-              onClick={onNavigate}
-              className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
-            >
-              Shop all {item.label.toLowerCase()}
-            </Link>
-          )}
+      {/* The panel stays in the page and its row height eases between 0 and
+          its natural height, so it glides open instead of popping. `inert`
+          keeps the hidden links out of reach of the keyboard and screen readers. */}
+      <div
+        inert={!open}
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="pb-4 pl-1">
+            <NavTree item={item} onNavigate={onNavigate} />
+            {item.showAll && item.href && (
+              <Link
+                href={item.href}
+                onClick={onNavigate}
+                className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors duration-300 ease-out hover:text-primary active:text-primary motion-reduce:transition-none"
+              >
+                Shop all {item.label.toLowerCase()}
+              </Link>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </li>
   );
 }
