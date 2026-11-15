@@ -26,6 +26,9 @@ const INPUT =
 const LABEL = "mb-2 block font-sans text-xs text-ink-muted";
 const BUTTON =
   "rounded-[18px] border border-ink px-7 py-3.5 font-sans text-sm text-ink transition-colors hover:border-primary hover:bg-primary hover:text-white active:scale-[0.98] disabled:opacity-60";
+// Quieter than BUTTON: a lighter outline and muted text, for the alternative way in.
+const SECONDARY_BUTTON =
+  "rounded-[18px] border border-outline px-5 py-2.5 font-sans text-sm text-ink-muted transition-colors hover:border-ink hover:text-ink active:scale-[0.98] disabled:opacity-60";
 const LINK =
   "text-ink underline underline-offset-4 transition-colors hover:text-primary";
 const FIELD_ERROR = "mt-2 font-sans text-sm text-error";
@@ -277,6 +280,19 @@ export function AuthPanel({
               </button>
               .
             </p>
+            {/* An address that already has an account gets no email at all (so
+                strangers can't use this form to find out who is registered). */}
+            <p className="mt-6 text-ink-muted">
+              No email after a few minutes? You may already have an account.{" "}
+              <button type="button" onClick={() => go("login")} className={LINK}>
+                Log in
+              </button>{" "}
+              or{" "}
+              <button type="button" onClick={() => go("forgot")} className={LINK}>
+                reset your password
+              </button>
+              .
+            </p>
           </div>
         )}
 
@@ -296,26 +312,6 @@ export function AuthPanel({
 
         {!done && (
           <>
-            {view !== "forgot" && (
-              <>
-                <button
-                  type="button"
-                  onClick={google}
-                  disabled={busy}
-                  className={`flex w-full items-center justify-center gap-3 ${BUTTON}`}
-                >
-                  <GoogleMark />
-                  Continue with Google
-                </button>
-
-                <div className="my-6 flex items-center gap-4 font-sans text-xs text-ink-muted">
-                  <span className="h-px flex-1 bg-outline" />
-                  or
-                  <span className="h-px flex-1 bg-outline" />
-                </div>
-              </>
-            )}
-
             <form onSubmit={submit} noValidate className="flex flex-col gap-5">
               {view === "create" && (
                 <div className="grid grid-cols-2 gap-3">
@@ -482,8 +478,30 @@ export function AuthPanel({
               )}
             </div>
 
+            {/* Email and password is the main way in. Google is an alternative
+                below it: smaller and quieter, so the two don't compete. */}
+            {view !== "forgot" && (
+              <>
+                <div className="my-6 flex items-center gap-4 font-sans text-xs text-ink-muted">
+                  <span className="h-px flex-1 bg-outline" />
+                  or
+                  <span className="h-px flex-1 bg-outline" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={google}
+                  disabled={busy}
+                  className={`flex w-full items-center justify-center gap-2.5 ${SECONDARY_BUTTON}`}
+                >
+                  <GoogleMark />
+                  Continue with Google
+                </button>
+              </>
+            )}
+
             {view === "login" && (
-              <p className="mt-8 text-center font-sans text-xs leading-relaxed text-ink-muted">
+              <p className="mt-4 text-center font-sans text-xs leading-relaxed text-ink-muted">
                 By continuing with Google you agree to our{" "}
                 <Link href="/policies/terms" target="_blank" className={LINK}>
                   Terms of service
