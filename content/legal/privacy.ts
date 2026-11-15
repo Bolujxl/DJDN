@@ -11,9 +11,7 @@ This Privacy Policy explains how DJDN collects, uses, stores and shares personal
 
 DJDN is a fashion brand operated by Deji Daniels Apparel, of No. 3, Owonikoko Street, Mafon Bus Stop, Idimu-Ejigbo, Idimu, Lagos State, Nigeria (BN number 3497940). For the purposes of the NDPA, the entity or person identified above is the data controller responsible for deciding how and why your personal data is processed.
 
-If you have a question about this Policy or wish to exercise a data protection right, contact us at djdn.afr@gmail.com or by WhatsApp on +234 818 886 5730. Our customer service hours are Monday to Saturday, 8:00 a.m. to 9:00 p.m. West Africa Time (WAT). [Confirm that these contact details and service hours remain current.]
-
-Where DJDN appoints a Data Protection Officer or another privacy contact, their details will be provided here: [insert name or role and contact details, if applicable].
+If you have a question about this Policy or wish to exercise a data protection right, contact us at djdn.afr@gmail.com or by WhatsApp on +234 818 886 5730. Our customer service hours are Monday to Saturday, 8:00 a.m. to 9:00 p.m. West Africa Time (WAT).
 
 ## Personal data we collect
 
@@ -47,10 +45,10 @@ We do not use your personal data to make decisions about you solely by automated
 
 We share personal data only where it is necessary for the purposes explained in this Policy, where you have agreed, or where disclosure is required or permitted by law. Depending on the services used by DJDN, recipients may include:
 - Payment service provider: Paystack. If we add another payment provider, we will name it here. The provider processes payment information to complete transactions and may provide DJDN with payment status and transaction references.
-- Delivery and courier partners: [insert the names of the courier companies, where known]. We provide the recipient's name, telephone number and delivery address so that an order can be delivered.
+- Delivery and courier partners: currently Bolt. We provide the recipient's name, telephone number and delivery address so that an order can be delivered. If you ask someone else to collect your order on your behalf, we will hand the order to that person.
 - Website hosting and technical service providers: currently Vercel, and any other provider used to host, maintain or secure the website.
 - Email and communications providers: currently Resend, and any provider used to send service or marketing emails.
-- Business productivity and record-management providers: currently identified as Google [confirm the products used and whether order or customer data is stored in them].
+- Business productivity and record-management providers: currently Google, through Google Sheets (order records) and Gmail (customer emails).
 - Public authorities, regulators, courts or law enforcement agencies, where disclosure is required by applicable law or is otherwise lawfully requested.
 
 Our service providers may process personal data on our behalf to provide services to DJDN. Where a provider acts as our data processor, we will require it to process the information in accordance with our documented instructions, protect it appropriately, and comply with applicable data protection obligations. Some providers may act as independent controllers for particular processing activities; their own privacy notices may also apply.
@@ -59,19 +57,19 @@ Our service providers may process personal data on our behalf to provide service
 
 Some service providers used to operate the website, send emails or store business information may process or store personal data outside Nigeria. Where personal data is transferred from Nigeria to another country, DJDN will ensure that the transfer is made only where a condition under sections 41–43 of the NDPA is satisfied. This may include an applicable adequacy mechanism or another lawful transfer condition.
 
-[Before publication: verify where each provider processes or stores data, and document the transfer basis and safeguards.] Further information about a particular transfer may be requested using the contact details in the Who we are section.
+For these transfers we rely on the safeguards the NDPA allows, including the data protection terms and security commitments that our providers publish and agree to, and on the transfer being necessary to carry out your order. Further information about a particular transfer may be requested using the contact details in the Who we are section.
 
 ## How long we keep personal data
 
-We keep personal data only for as long as reasonably necessary for the purpose for which it was collected, including to meet legal, accounting or reporting requirements and to establish, exercise or defend legal claims. [The periods below must be confirmed against DJDN's actual practices and record-keeping obligations before publication.]
+We keep personal data only for as long as reasonably necessary for the purpose for which it was collected, including to meet legal, accounting or reporting requirements and to establish, exercise or defend legal claims.
 
 | Category | Retention period |
 | --- | --- |
-| Order, transaction and accounting records | [Insert period based on applicable tax, accounting and other legal requirements.] |
-| Returns, exchanges, refunds and customer enquiries | [Insert period after the matter is closed, taking account of potential claims.] |
+| Order, transaction and accounting records | Six years from the end of the financial year in which the order was made, in line with tax and accounting record-keeping requirements. |
+| Returns, exchanges, refunds and customer enquiries | Three years after the matter is closed. Refund and payment records are kept with the order records above. |
 | Newsletter subscription details | Until you unsubscribe or withdraw consent, subject to a limited suppression record where needed to respect your choice. |
-| WhatsApp, email and other customer-service conversations | [Insert period based on operational needs and potential claims.] |
-| Website security and server logs | [Confirm the period with the hosting/technical provider.] |
+| WhatsApp, email and other customer-service conversations | Three years after the last message, unless they relate to an order record kept for longer. |
+| Website security and server logs | Held by our hosting provider for a short period, usually no more than 30 days. |
 
 When the applicable retention period ends, we will securely delete the information or anonymise it so that it no longer identifies you, unless a lawful reason requires us to retain it for longer.
 

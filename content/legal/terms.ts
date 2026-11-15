@@ -15,7 +15,7 @@ For enquiries, you may contact us at djdn.afr@gmail.com or via WhatsApp on +234 
 
 We make reasonable efforts to ensure that product descriptions, photographs and prices displayed on our website are accurate. However, slight variations in colour and appearance may occur due to screen settings.
 
-All prices are stated in Nigerian Naira (₦) and **[include/exclude]** applicable VAT. Delivery charges are calculated separately and displayed before checkout.
+All prices are stated in Nigerian Naira (₦) and include applicable VAT. Delivery charges are calculated separately and displayed before checkout.
 
 Placing an order constitutes an offer to purchase. An order is accepted when we issue an order confirmation following successful payment.
 
