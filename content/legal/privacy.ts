@@ -19,11 +19,11 @@ Where DJDN appoints a Data Protection Officer or another privacy contact, their 
 
 The personal data we collect depends on how you interact with us. It may include:
 - Order and account information: your name, email address, telephone number, delivery address, order details, and any account details you choose to provide.
-- Payment and transaction information: payment status, transaction reference, amount, date and related order records. Card or other payment credentials are handled by the relevant payment provider where the payment process is configured that way; [confirm the provider and verify that DJDN does not receive or store card details].
+- Payment and transaction information: payment status, transaction reference, amount, date and related order records. Card and other payment details are entered on our payment provider's secure payment page and are handled by that provider. DJDN does not receive or store your card details.
 - Customer service information: your order number, contact details, and the contents of messages or forms you send about orders, returns, exchanges, refunds or complaints.
 - Communications and marketing preferences: your email address or telephone number, the messages you send us, and whether you have chosen to receive marketing communications.
 - Website and device information: IP address, browser or device information, pages requested, and technical server logs generated when you use the website.
-- Browser storage information: information stored locally in your browser to remember your shopping cart and country or currency preference, as described in the Cookies and browser storage section.
+- Browser storage information: information stored locally in your browser to remember your shopping cart, your country or currency preference and the checkout details you type before placing an order, as described in the Cookies and browser storage section.
 
 **Please do not send us sensitive personal data unless it is necessary for a specific request and we have explained why it is needed.**
 
@@ -46,10 +46,10 @@ We do not use your personal data to make decisions about you solely by automated
 ## Who we share personal data with
 
 We share personal data only where it is necessary for the purposes explained in this Policy, where you have agreed, or where disclosure is required or permitted by law. Depending on the services used by DJDN, recipients may include:
-- Payment service provider: [confirm whether Flutterwave is used]. The provider processes payment information to complete transactions and may provide DJDN with payment status and transaction references.
+- Payment service provider: Paystack. If we add another payment provider, we will name it here. The provider processes payment information to complete transactions and may provide DJDN with payment status and transaction references.
 - Delivery and courier partners: [insert the names of the courier companies, where known]. We provide the recipient's name, telephone number and delivery address so that an order can be delivered.
-- Website hosting and technical service providers: currently identified as Vercel [confirm] and any other provider used to host, maintain or secure the website.
-- Email and communications providers: currently identified as Resend [confirm] and any provider used to send service or marketing emails.
+- Website hosting and technical service providers: currently Vercel, and any other provider used to host, maintain or secure the website.
+- Email and communications providers: currently Resend, and any provider used to send service or marketing emails.
 - Business productivity and record-management providers: currently identified as Google [confirm the products used and whether order or customer data is stored in them].
 - Public authorities, regulators, courts or law enforcement agencies, where disclosure is required by applicable law or is otherwise lawfully requested.
 
@@ -77,9 +77,14 @@ When the applicable retention period ends, we will securely delete the informati
 
 ## Cookies and browser storage
 
-Our website currently uses browser storage to remember items in your shopping cart and your country or currency preference. These functions help the website operate and make it easier for you to continue shopping when you return. [Confirm the exact cookies, local-storage items, their providers, duration and purposes by checking the live website and its technical configuration.]
+Our website uses a small amount of browser storage that it needs in order to work. We do not use it to follow you across other websites. This is what it holds:
 
-DJDN does not currently use advertising cookies or analytics. [Verify this against the live website, including any tools or scripts enabled by the platform or third-party services, before publication.] If analytics, advertising or other non-essential tracking technologies are introduced, DJDN will update this Policy and implement an appropriate notice and consent mechanism before using them where required by law.
+- **Country or currency choice** (a cookie called djdn-country, set by DJDN): remembers the country or currency you chose. It lasts up to one year.
+- **Shopping cart** (browser storage called djdn-cart, set by DJDN): remembers the items in your cart so they are still there if you refresh the page or come back later. It stays until you empty the cart or clear your browser data.
+- **Checkout details** (temporary browser storage called djdn-checkout, set by DJDN): keeps what you type at checkout, such as your name, email address, phone number and delivery address, so you do not lose it if the page reloads. It stays on your device and is removed when you close the browser tab.
+- **Sign-in** (cookies set by our account provider, Supabase, only if you create an account and log in): keep you signed in. They end when you sign out or the session expires.
+
+DJDN does not currently use advertising cookies, analytics or other tracking tools. If analytics, advertising or other non-essential tracking technologies are introduced, DJDN will update this Policy and implement an appropriate notice and consent mechanism before using them where required by law.
 
 You can also manage or delete cookies and browser storage through your browser settings. Blocking some storage may affect shopping-cart or other website functions.
 

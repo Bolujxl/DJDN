@@ -23,7 +23,7 @@ We reserve the right to reject or cancel an order where a product is unavailable
 
 ## Payment
 
-Payments may be made through our designated payment provider, **[Confirm Payment Provider]**, using the available payment methods displayed at checkout. Payment must be successfully completed before an order is confirmed. Where payment fails or remains pending, the order will not be processed.
+Payments may be made through our designated payment provider, **Paystack**, using the available payment methods displayed at checkout. Payment must be successfully completed before an order is confirmed. Where payment fails or remains pending, the order will not be processed.
 
 Payment card information is processed by our payment provider in accordance with its applicable security and privacy standards. **DJDN does not store customers’ full card details.**
 
