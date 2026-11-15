@@ -88,7 +88,7 @@ export function ComingSoon({ page: key }: { page: ComingSoonKey }) {
           <li>
             <Link
               href="/shop"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+              className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
               Keep shopping
             </Link>
@@ -98,7 +98,7 @@ export function ComingSoon({ page: key }: { page: ComingSoonKey }) {
               href={SITE.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+              className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
               {SITE.instagramHandle} on Instagram
             </a>

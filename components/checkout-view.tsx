@@ -97,6 +97,9 @@ export function CheckoutView() {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
       const saved: unknown = raw ? JSON.parse(raw) : null;
       if (saved && typeof saved === "object") {
+        // Restoring the draft after load is intentional: the server renders
+        // an empty form, and reading it earlier would mismatch.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setValues((current) => {
           const next = { ...current };
           for (const key of Object.keys(EMPTY) as (keyof Fields)[]) {
@@ -172,7 +175,7 @@ export function CheckoutView() {
           Your cart is empty.{" "}
           <Link
             href="/shop"
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             Keep shopping
           </Link>
@@ -363,7 +366,7 @@ export function CheckoutView() {
                 duties or taxes when they arrive. Talk to{" "}
                 <Link
                   href="/customer-care#shipping"
-                  className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                  className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
                 >
                   customer care
                 </Link>{" "}

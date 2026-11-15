@@ -113,6 +113,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
+      // Reading saved state after the page loads is intentional: the server
+      // renders an empty cart, and reading it earlier would mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (stored) setItems(parseStoredCart(stored));
     } catch {
       // Storage can be blocked; start with an empty cart.
@@ -236,7 +239,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             onClick={undoRemove}
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             Undo
           </button>
@@ -312,7 +315,7 @@ function AddedPopup({ item, onClose }: { item: CartItem; onClose: () => void }) 
         <button
           type="button"
           onClick={onClose}
-          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
         >
           Keep shopping
         </button>

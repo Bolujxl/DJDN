@@ -18,10 +18,9 @@ export function Settle({ children }: { children: React.ReactNode }) {
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setSettled(true);
-      return;
-    }
+    // Under reduced motion the photo is already at full size (see the class
+    // below), so there is nothing to watch for.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -40,7 +39,7 @@ export function Settle({ children }: { children: React.ReactNode }) {
     <div
       ref={ref}
       className={`absolute inset-0 transition-transform duration-700 ease-out motion-reduce:transition-none ${
-        settled ? "scale-100" : "scale-[1.04]"
+        settled ? "scale-100" : "scale-[1.04] motion-reduce:scale-100"
       }`}
     >
       {children}

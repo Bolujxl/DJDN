@@ -134,7 +134,7 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/customer-care#contact"
-            className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             Get in touch
           </Link>

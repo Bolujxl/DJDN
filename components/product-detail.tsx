@@ -238,14 +238,14 @@ export function ProductDetail({ product }: { product: Product }) {
                   See our{" "}
                   <Link
                     href="/customer-care#shipping"
-                    className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                    className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
                   >
                     shipping
                   </Link>{" "}
                   and{" "}
                   <Link
                     href="/returns"
-                    className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                    className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
                   >
                     return policy
                   </Link>

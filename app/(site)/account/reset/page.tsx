@@ -37,7 +37,7 @@ export default async function ResetPasswordPage() {
           This link has expired or has already been used.{" "}
           <Link
             href="/account"
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             Ask for a new one
           </Link>{" "}

@@ -120,7 +120,7 @@ export function OrderDetailView({
                       {product ? (
                         <Link
                           href={`/products/${product.slug}`}
-                          className="text-ink transition-colors hover:text-primary"
+                          className="text-ink transition-colors hover:text-primary-hover"
                         >
                           {line.name}
                         </Link>
@@ -189,7 +189,7 @@ export function OrderDetailView({
                 Quote {order.number} when you{" "}
                 <Link
                   href="/customer-care"
-                  className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                  className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
                 >
                   contact us
                 </Link>

@@ -17,7 +17,7 @@ const INPUT =
 const LABEL = "mb-2 block font-sans text-xs text-ink-muted";
 
 const LINK =
-  "text-ink underline underline-offset-4 transition-colors hover:text-primary";
+  "text-ink underline underline-offset-4 transition-colors hover:text-primary-hover";
 
 /**
  * Track order without a database: order number and email in, an email to

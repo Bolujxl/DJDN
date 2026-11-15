@@ -42,7 +42,7 @@ export function ProductCategorySection({
         </div>
         <Link
           href="/shop"
-          className="shrink-0 font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+          className="shrink-0 font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
         >
           View all
         </Link>

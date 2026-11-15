@@ -28,7 +28,7 @@ export function NewArrivals() {
         </h2>
         <Link
           href="/new-arrivals"
-          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
         >
           View all
         </Link>

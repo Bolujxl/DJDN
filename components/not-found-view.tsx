@@ -36,7 +36,7 @@ export function NotFoundView() {
           <li>
             <Link
               href="/"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+              className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
               Back home
             </Link>
@@ -44,7 +44,7 @@ export function NotFoundView() {
           <li>
             <Link
               href="/shop"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+              className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
               Shop all
             </Link>

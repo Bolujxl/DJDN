@@ -43,7 +43,7 @@ const NAV: NavItem[] = [
           { label: "Tops", href: "/shop/men/tops" },
           { label: "Pants", href: "/shop/men/pants" },
           { label: "Sweats", href: "/shop/men/sweats" },
-          { label: "Head gear", href: "/shop/men/head-gear" },
+          { label: "Headgear", href: "/shop/men/head-gear" },
         ],
       },
     ],
@@ -58,7 +58,7 @@ const NAV: NavItem[] = [
           { label: "Tops", href: "/shop/women/tops" },
           { label: "Pants", href: "/shop/women/pants" },
           { label: "Sweats", href: "/shop/women/sweats" },
-          { label: "Head gear", href: "/shop/women/head-gear" },
+          { label: "Headgear", href: "/shop/women/head-gear" },
         ],
       },
     ],
@@ -72,7 +72,7 @@ const NAV: NavItem[] = [
  * already drawn.
  */
 const navLinkClass = (active: boolean) =>
-  `relative whitespace-nowrap font-sans text-sm transition-colors duration-300 ease-out hover:text-primary after:absolute after:inset-x-0 after:-bottom-2 after:h-px after:origin-left after:bg-current after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:after:transition-none ${
+  `relative whitespace-nowrap font-sans text-sm transition-colors duration-300 ease-out hover:text-primary-hover after:absolute after:inset-x-0 after:-bottom-2 after:h-px after:origin-left after:bg-current after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none motion-reduce:after:transition-none ${
     active
       ? "text-ink after:scale-x-100"
       : "text-ink/80 after:scale-x-0 hover:after:scale-x-100"
@@ -83,7 +83,7 @@ const navLinkClass = (active: boolean) =>
  * colour warms to orange and the row slides a hair to the right while pressed.
  */
 const MOBILE_LINK =
-  "block py-3 font-sans text-base text-ink transition-[color,translate] duration-300 ease-out hover:text-primary active:translate-x-0.5 active:text-primary motion-reduce:transition-none";
+  "block py-3 font-sans text-base text-ink transition-[color,translate] duration-300 ease-out hover:text-primary-hover active:translate-x-0.5 active:text-primary-hover motion-reduce:transition-none";
 
 /** Icon buttons in the header: a soft circle fades in behind the icon. */
 const ICON_BUTTON =
@@ -113,7 +113,7 @@ function NavTree({
                 <Link
                   href={link.href}
                   onClick={onNavigate}
-                  className="block py-1.5 font-sans text-sm text-ink transition-[color,translate] duration-300 ease-out hover:translate-x-0.5 hover:text-primary active:translate-x-0.5 active:text-primary motion-reduce:transition-none"
+                  className="block py-1.5 font-sans text-sm text-ink transition-[color,translate] duration-300 ease-out hover:translate-x-0.5 hover:text-primary-hover active:translate-x-0.5 active:text-primary-hover motion-reduce:transition-none"
                 >
                   {link.label}
                 </Link>
@@ -198,6 +198,14 @@ export function SiteHeader() {
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
+        // Keyboard users get their place back: focus returns to the menu
+        // button they opened it from.
+        const opener = headerRef.current?.querySelector<HTMLElement>(
+          'nav[aria-label="Primary"] button[aria-expanded="true"]',
+        );
+        if (opener && headerRef.current?.contains(document.activeElement)) {
+          opener.focus();
+        }
         setOpenDept(null);
         setMobileOpen(false);
       }
@@ -318,6 +326,14 @@ export function SiteHeader() {
                   className="relative"
                   onMouseEnter={() => openMenu(item.label)}
                   onMouseLeave={closeMenuSoon}
+                  onBlur={(e) => {
+                    // Tabbing on past the last link closes the menu. Focus
+                    // leaving the page (no next target) leaves it alone.
+                    const next = e.relatedTarget as Node | null;
+                    if (next && !e.currentTarget.contains(next)) {
+                      setOpenDept((v) => (v === item.label ? null : v));
+                    }
+                  }}
                 >
                   <button
                     type="button"
@@ -346,7 +362,7 @@ export function SiteHeader() {
                           <Link
                             href={item.href}
                             onClick={() => setOpenDept(null)}
-                            className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                            className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
                           >
                             Shop all {item.label.toLowerCase()}
                           </Link>
@@ -483,7 +499,7 @@ function MobileBranch({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors duration-300 ease-out hover:text-primary active:text-primary motion-reduce:transition-none"
+        className="flex w-full items-center justify-between rounded py-3 font-sans text-base text-ink transition-colors duration-300 ease-out hover:text-primary-hover active:text-primary-hover motion-reduce:transition-none"
       >
         {item.label}
         <span
@@ -510,7 +526,7 @@ function MobileBranch({
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors duration-300 ease-out hover:text-primary active:text-primary motion-reduce:transition-none"
+                className="mt-6 inline-block font-sans text-sm text-ink underline underline-offset-4 transition-colors duration-300 ease-out hover:text-primary-hover active:text-primary-hover motion-reduce:transition-none"
               >
                 Shop all {item.label.toLowerCase()}
               </Link>

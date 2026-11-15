@@ -30,7 +30,7 @@ const BUTTON =
 const SECONDARY_BUTTON =
   "rounded-[18px] border border-outline px-5 py-2.5 font-sans text-sm text-ink-muted transition-colors hover:border-ink hover:text-ink active:scale-[0.98] disabled:opacity-60";
 const LINK =
-  "text-ink underline underline-offset-4 transition-colors hover:text-primary";
+  "text-ink underline underline-offset-4 transition-colors hover:text-primary-hover";
 const FIELD_ERROR = "mt-2 font-sans text-sm text-error";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const MIN_PASSWORD = 8;

@@ -39,7 +39,7 @@ export function CartView() {
           Your cart is empty.{" "}
           <Link
             href="/shop"
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             Keep shopping
           </Link>

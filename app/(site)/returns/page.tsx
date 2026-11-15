@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const LINK =
-  "text-ink underline underline-offset-4 transition-colors hover:text-primary";
+  "text-ink underline underline-offset-4 transition-colors hover:text-primary-hover";
 
 const STEPS = [
   "Find your order number in your confirmation email.",

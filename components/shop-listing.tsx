@@ -74,6 +74,7 @@ export function ShopListing({
       lo < hi &&
       (lo > bounds[0] || hi < bounds[1])
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRange([lo, hi]);
     }
     if (SORTS.some((s) => s.value === order)) setSort(order as Sort);
@@ -255,7 +256,7 @@ export function ShopListing({
             Nothing here yet.{" "}
             <Link
               href="/shop"
-              className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+              className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
               See everything
             </Link>

@@ -93,7 +93,7 @@ function Suggestions() {
         <li key={link.href}>
           <Link
             href={link.href}
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             {link.label}
           </Link>

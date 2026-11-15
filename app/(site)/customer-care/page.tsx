@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const LINK =
-  "text-ink underline underline-offset-4 transition-colors hover:text-primary";
+  "text-ink underline underline-offset-4 transition-colors hover:text-primary-hover";
 
 /**
  * Contact and shipping on one page (the footer's "Customer care", the old
@@ -43,12 +43,12 @@ export default function CustomerCarePage() {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-baseline gap-1.5 text-xl leading-tight tracking-[-0.02em] text-ink transition-colors hover:text-primary sm:text-2xl"
+                className="group inline-flex items-baseline gap-1.5 text-xl leading-tight tracking-[-0.02em] text-ink transition-colors hover:text-primary-hover sm:text-2xl"
               >
                 <span className="tabular-nums">{SITE.whatsappDisplay}</span>
                 <span
                   aria-hidden="true"
-                  className="text-base text-ink-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary"
+                  className="text-base text-ink-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-hover"
                 >
                   ↗
                 </span>
@@ -60,7 +60,7 @@ export default function CustomerCarePage() {
             <dd className="mt-2">
               <a
                 href={EMAIL_URL}
-                className="break-all text-xl leading-tight tracking-[-0.02em] text-ink underline decoration-outline decoration-1 underline-offset-[6px] transition-colors hover:text-primary hover:decoration-primary sm:text-2xl"
+                className="break-all text-xl leading-tight tracking-[-0.02em] text-ink underline decoration-outline decoration-1 underline-offset-[6px] transition-colors hover:text-primary-hover hover:decoration-primary sm:text-2xl"
               >
                 {SITE.email}
               </a>

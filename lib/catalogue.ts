@@ -41,7 +41,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   tops: "Tops",
   pants: "Pants",
   sweats: "Sweats",
-  headgear: "Head gear",
+  headgear: "Headgear",
 };
 
 export const CATEGORY_DESCRIPTIONS: Record<Category, string> = {

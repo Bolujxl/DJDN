@@ -174,7 +174,7 @@ export function PriceRangeFilter({
               <button
                 type="button"
                 onClick={() => onChange(null)}
-                className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+                className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
               >
                 Reset
               </button>

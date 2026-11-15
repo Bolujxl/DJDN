@@ -147,7 +147,7 @@ export function RequestSent({
           <button
             type="button"
             onClick={onReset}
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
           >
             {resetLabel}
           </button>

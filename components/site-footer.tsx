@@ -67,7 +67,7 @@ const LEGAL: FooterLink[] = [
 ];
 
 const LINK_CLASS =
-  "font-sans text-sm text-on-secondary/90 transition-colors hover:text-primary";
+  "font-sans text-sm text-on-secondary/90 transition-colors hover:text-white";
 
 function FooterAnchor({ link }: { link: FooterLink }) {
   return link.href.startsWith("http") ? (
@@ -147,7 +147,7 @@ export function SiteFooter() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="font-sans text-xs text-on-secondary-muted transition-colors hover:text-primary"
+                    className="font-sans text-xs text-on-secondary-muted transition-colors hover:text-white"
                   >
                     {link.label}
                   </Link>
