@@ -67,6 +67,9 @@ export function AuthPanel({
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Signing up with an email that already has an account isn't a failure, so
+  // it gets its own calm note with a way forward instead of a red error.
+  const [existing, setExisting] = useState(false);
   const [message, setMessage] = useState<string | null>(
     linkFailed ? "That link didn’t work or has expired. Please try again." : null,
   );
@@ -74,6 +77,7 @@ export function AuthPanel({
   const busy = status === "loading";
   const set = (key: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields((f) => ({ ...f, [key]: e.target.value }));
+    if (key === "email") setExisting(false);
     // Once they start fixing a field, its error message has done its job.
     if (errors[key]) {
       setErrors((current) => {
@@ -98,6 +102,7 @@ export function AuthPanel({
     setStatus("idle");
     setErrors({});
     setMessage(null);
+    setExisting(false);
   }
 
   function finish() {
@@ -152,6 +157,7 @@ export function AuthPanel({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setMessage(null);
+    setExisting(false);
 
     const found: Record<string, string> = {};
     const email = fields.email.trim();
@@ -213,7 +219,7 @@ export function AuthPanel({
         if (error) {
           setStatus("idle");
           if (error.code === "user_already_exists") {
-            setMessage("An account with this email already exists. Log in instead.");
+            setExisting(true);
           } else if (error.code === "weak_password") {
             setErrors({ password: `Choose a stronger password of at least ${MIN_PASSWORD} characters.` });
           } else if (error.status === 429) {
@@ -442,12 +448,28 @@ export function AuthPanel({
                       : "Log in"}
               </button>
 
-              <p
-                role="alert"
-                className="min-h-6 text-center font-sans text-sm leading-relaxed text-error"
-              >
-                {message}
-              </p>
+              {existing ? (
+                <p role="alert" className="text-center font-sans text-sm leading-relaxed text-ink">
+                  You already have an account with this email.
+                  <span className="mt-1 block text-ink-muted">
+                    <button type="button" onClick={() => go("login")} className={LINK}>
+                      Log in
+                    </button>{" "}
+                    or{" "}
+                    <button type="button" onClick={() => go("forgot")} className={LINK}>
+                      reset your password
+                    </button>
+                    .
+                  </span>
+                </p>
+              ) : (
+                <p
+                  role="alert"
+                  className="min-h-6 text-center font-sans text-sm leading-relaxed text-error"
+                >
+                  {message}
+                </p>
+              )}
             </form>
 
             <div className="mt-2 text-center font-sans text-sm text-ink-muted">
