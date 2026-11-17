@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s · DJDN",
   },
   description:
-    "DJDN makes sophisticated, everyday clothing for men and women — quietly made, honestly priced.",
+    "DJDN makes sophisticated, everyday clothing for men and women, quietly made and honestly priced.",
   openGraph: {
     type: "website",
     siteName: "DJDN",

@@ -48,7 +48,7 @@ export default function CustomerCarePage() {
                 <span className="tabular-nums">{SITE.whatsappDisplay}</span>
                 <span
                   aria-hidden="true"
-                  className="text-base text-ink-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-hover"
+                  className="text-base text-ink-muted transition-[color,translate] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary-hover"
                 >
                   ↗
                 </span>

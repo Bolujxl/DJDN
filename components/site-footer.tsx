@@ -122,7 +122,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 py-12 lg:grid-cols-4 lg:py-16">
           {COLUMNS.map((column) => (
             <div key={column.title}>
-              <p className="font-sans text-xs text-on-secondary-muted">
+              <p className="font-sans text-sm text-on-secondary-muted">
                 {column.title}
               </p>
               <ul className="mt-4 space-y-3">

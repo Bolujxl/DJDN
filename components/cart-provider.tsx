@@ -239,7 +239,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           <button
             type="button"
             onClick={undoRemove}
-            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
+            className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover active:text-primary-hover"
           >
             Undo
           </button>
@@ -315,7 +315,7 @@ function AddedPopup({ item, onClose }: { item: CartItem; onClose: () => void }) 
         <button
           type="button"
           onClick={onClose}
-          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
+          className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover active:text-primary-hover"
         >
           Keep shopping
         </button>

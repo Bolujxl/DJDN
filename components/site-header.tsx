@@ -87,7 +87,7 @@ const MOBILE_LINK =
 
 /** Icon buttons in the header: a soft circle fades in behind the icon. */
 const ICON_BUTTON =
-  "rounded-full p-3 text-ink transition-colors duration-300 ease-out hover:bg-secondary/8 motion-reduce:transition-none";
+  "rounded-full p-3 text-ink transition-[background-color,scale] duration-300 ease-out hover:bg-secondary/8 active:scale-90 active:bg-secondary/8 motion-reduce:transition-none";
 
 /** Org-chart rendering of a branch: groups side by side, leaves on connector lines. */
 function NavTree({
@@ -270,7 +270,7 @@ export function SiteHeader() {
         tucked ? "-translate-y-full" : ""
       }`}
     >
-      <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-8">
         {/* Mobile menu trigger */}
         <button
           ref={menuButtonRef}
@@ -300,23 +300,8 @@ export function SiteHeader() {
           </span>
         </button>
 
-        {/* Logo mark */}
-        <Link
-          href="/"
-          className="transition-opacity duration-300 ease-out hover:opacity-70 motion-reduce:transition-none lg:flex-1"
-          onClick={() => setOpenDept(null)}
-        >
-          <Image
-            src="/brand/logo/djdn-logo.png"
-            alt="DJDN"
-            width={1080}
-            height={478}
-            priority
-            className="h-8 w-auto sm:h-9"
-          />
-        </Link>
-
-        {/* Primary nav, desktop */}
+        {/* Primary nav, desktop. Sits before the logo in the markup so the tab
+            order matches what's on screen: nav on the left, logo centred. */}
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-6 xl:gap-8">
             {NAV.map((item) =>
@@ -386,8 +371,24 @@ export function SiteHeader() {
           </ul>
         </nav>
 
+        {/* Logo mark. Centred on desktop by the three-column grid. */}
+        <Link
+          href="/"
+          className="transition-opacity duration-300 ease-out hover:opacity-70 motion-reduce:transition-none"
+          onClick={() => setOpenDept(null)}
+        >
+          <Image
+            src="/brand/logo/djdn-logo.png"
+            alt="DJDN"
+            width={1080}
+            height={478}
+            priority
+            className="h-8 w-auto sm:h-9"
+          />
+        </Link>
+
         {/* Utility icons */}
-        <div className="flex items-center gap-1 lg:flex-1 lg:justify-end">
+        <div className="flex items-center gap-1 lg:justify-end">
           <Link
             href="/search"
             aria-label="Search"
@@ -458,7 +459,7 @@ export function SiteHeader() {
 
             {/* Help sits in the footer on desktop, several screens down on a
                 phone, so the common ones are repeated here. */}
-            <p className="mt-8 font-sans text-xs text-ink-muted">Help</p>
+            <p className="mt-8 font-sans text-sm text-ink-muted">Help</p>
             <ul className="mt-2">
               {MOBILE_HELP.map((link) => (
                 <li key={link.href}>

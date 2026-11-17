@@ -69,11 +69,11 @@ export function ProductTile({
             className={`object-cover ${
               product.hoverImage
                 ? ""
-                : "transition-transform duration-500 ease-out group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transition-none"
+                : "transition-transform duration-400 ease-out group-hover:scale-[1.03] group-focus-visible:scale-[1.03] motion-reduce:transition-none"
             }`}
           />
           {product.hoverImage && (
-            <div className="absolute inset-0 bg-surface opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
+            <div className="absolute inset-0 bg-surface opacity-0 transition-opacity duration-400 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
               <Image
                 src={product.hoverImage}
                 alt=""

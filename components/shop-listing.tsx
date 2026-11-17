@@ -258,7 +258,7 @@ export function ShopListing({
               href="/shop"
               className="text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
             >
-              See everything
+              View all
             </Link>
           </p>
         </div>

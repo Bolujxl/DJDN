@@ -63,7 +63,7 @@ export function ShopTile({
               />
             )}
             {hover && (
-              <div className="absolute inset-0 bg-surface opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none">
+              <div className="absolute inset-0 bg-surface opacity-0 transition-opacity duration-400 ease-out group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none">
                 <Image
                   src={hover}
                   alt=""
