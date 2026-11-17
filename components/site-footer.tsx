@@ -103,19 +103,22 @@ export function SiteFooter() {
         />
       </div>
 
-      <div className="px-4 pb-8 pt-16 sm:px-6 lg:px-8 lg:pb-10 lg:pt-24">
-        {/* Newsletter lead */}
-        <div className="grid gap-8 border-b border-white/10 pb-16 lg:grid-cols-2 lg:items-end lg:pb-24">
+      <div className="px-4 pb-8 pt-14 sm:px-6 lg:px-8 lg:pb-10 lg:pt-20">
+        {/* Newsletter lead: text on the left, the field on the right with its
+            bottom edge level with the last line of the copy. */}
+        <div className="grid gap-8 border-b border-white/10 pb-12 lg:grid-cols-2 lg:items-end lg:pb-16">
           <div>
             <h2 className="text-5xl leading-[0.95] tracking-[-0.045em] text-on-secondary sm:text-6xl">
               Join our colony
             </h2>
-            <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-on-secondary-muted">
+            <p className="mt-4 max-w-sm text-balance font-sans text-sm leading-relaxed text-on-secondary-muted">
               New arrivals, restocks, and the occasional word from us. No more
               than that.
             </p>
           </div>
-          <NewsletterForm />
+          <div className="w-full lg:max-w-lg lg:justify-self-end">
+            <NewsletterForm className="w-full" />
+          </div>
         </div>
 
         {/* Four flat link columns */}

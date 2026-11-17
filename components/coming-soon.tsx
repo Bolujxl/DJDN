@@ -77,7 +77,7 @@ export function ComingSoon({ page: key }: { page: ComingSoonKey }) {
             buttonLabel="Notify me"
             doneMessage="Noted. We'll let you know."
             tone="light"
-            className="w-full"
+            className="w-full max-w-md"
           />
         </div>
 

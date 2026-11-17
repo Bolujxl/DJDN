@@ -46,10 +46,33 @@ export function NewsletterForm({
   }
 
   if (status === "done") {
+    // Same footprint as the field it replaces (same radius, same height), so
+    // the layout doesn't jump when the form is sent.
     return (
       <p
-        className={`font-sans text-sm ${light ? "text-ink" : "text-on-secondary"}`}
+        role="status"
+        className={`flex min-h-[3.125rem] items-center gap-3 rounded-[18px] border px-5 py-3 font-sans text-base ${
+          light
+            ? "border-outline bg-surface text-ink"
+            : "border-white/20 bg-white/5 text-on-secondary"
+        } ${className}`}
       >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+          className="shrink-0"
+        >
+          <path
+            d="M5 12.5l4.5 4.5L19 7.5"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         {doneMessage}
       </p>
     );
@@ -59,7 +82,7 @@ export function NewsletterForm({
     <form
       onSubmit={handleSubmit}
       noValidate
-      className={`flex max-w-md flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}
+      className={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}
     >
       <label htmlFor={id} className="sr-only">
         Email address
