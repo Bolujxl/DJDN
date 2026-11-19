@@ -152,7 +152,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .page-enter {
-    animation: page-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: page-enter 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 }
 
@@ -222,7 +222,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-rise {
-    animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
+    animation: hero-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both;
   }
 
   .hero-settle {
