@@ -33,11 +33,13 @@ export default function Home() {
       <ProductCategorySection
         title="Shirts"
         subtitle="Swirl prints and weekend staples."
+        category="tops"
         products={SHIRTS}
       />
       <ProductCategorySection
         title="Shorts"
         subtitle="Corduroy and cargo, built to move."
+        category="pants"
         products={SHORTS}
         reverse
       />

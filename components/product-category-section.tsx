@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { CATEGORY_LABELS, type Category } from "@/lib/catalogue";
+
 import { ProductTile, type TileProduct } from "./product-tile";
 
 /**
@@ -12,15 +14,19 @@ import { ProductTile, type TileProduct } from "./product-tile";
  * column never ends on an empty cell. `reverse` flips which side the lead
  * sits on so consecutive categories don't repeat the same composition. The
  * title always stays on the left. White ground matches the product tiles.
+ * "View all" opens the shop filtered to `category`, and says so to screen
+ * readers, since several of these links share one page.
  */
 export function ProductCategorySection({
   title,
   subtitle,
+  category,
   products,
   reverse = false,
 }: {
   title: string;
   subtitle: string;
+  category: Category;
   products: TileProduct[];
   reverse?: boolean;
 }) {
@@ -41,10 +47,11 @@ export function ProductCategorySection({
           </p>
         </div>
         <Link
-          href="/shop"
+          href={`/shop?type=${category}`}
           className="shrink-0 font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
         >
           View all
+          <span className="sr-only"> {CATEGORY_LABELS[category].toLowerCase()}</span>
         </Link>
       </div>
 

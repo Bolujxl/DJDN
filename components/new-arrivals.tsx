@@ -30,7 +30,7 @@ export function NewArrivals() {
           href="/new-arrivals"
           className="font-sans text-sm text-ink underline underline-offset-4 transition-colors hover:text-primary-hover"
         >
-          View all
+          View all<span className="sr-only"> new arrivals</span>
         </Link>
       </div>
 
